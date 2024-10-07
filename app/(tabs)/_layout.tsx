@@ -1,37 +1,40 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { View, Text } from 'react-native'
+import React from 'react'
+import {Tabs, Redirect  } from "expo-router";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+const TabLayout = () => {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
+    <>
+        <Tabs
+        screenOptions={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarActiveTintColor: '#000',
+            tabBarInactiveTintColor: '#000',
+            tabBarStyle: {
+              position: 'absolute',
+              elevation: 0,
+              backgroundColor: '#ffffff',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              height: 90,
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 10,
+              },
+              shadowOpacity: 1,
+              shadowRadius: 10,
+            }
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
-  );
+        >
+            <Tabs.Screen name='home' options={{title:'Trang chính',headerShown: false}}></Tabs.Screen>
+            <Tabs.Screen name='favourite-tour' options={{title:'Yêu thích',headerShown: false}}></Tabs.Screen>
+            <Tabs.Screen name='schedule' options={{title:'Lịch trình',headerShown: false}}></Tabs.Screen>
+            <Tabs.Screen name='profile' options={{title:'Hồ sơ',headerShown: false}}></Tabs.Screen>
+        </Tabs>
+    </>
+  )
 }
+
+export default TabLayout
