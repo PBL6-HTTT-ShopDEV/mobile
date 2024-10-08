@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import CustomInput from '../../components/CustomInput';
 import HodophileLogo from '../../components/HodophileLogo';
 import SocialLoginButtons from '../../components/SocialLoginButtons';
+import { router } from 'expo-router';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -26,10 +27,6 @@ const SignIn = () => {
     console.log('Quên mật khẩu');
   };
 
-  const handleSignUp = () => {
-    console.log('Đăng ký');
-  };
-
   return (
     <StyledImageBackground
       source={require('../../assets/images/bg-heroBanner.png')}
@@ -39,39 +36,40 @@ const SignIn = () => {
         <StyledView className="items-center mb-4 mt-20">
           <HodophileLogo width={328} height={96} />
         </StyledView>
-        
         <StyledLinearGradient
           colors={['#24BAEC', '#FFFFFF']}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           className="rounded-3xl p-6 mt-10"
         >
-          <CustomInput
-            placeholder="Nhập email hoặc số điện thoại"
-            value={email}
-            onChangeText={setEmail}
-            containerClassName="h-12"
-            inputClassName="h-full"
-          />
-          <CustomInput
-            placeholder="Nhập mật khẩu"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            containerClassName="h-12"
-            inputClassName="h-full"
-          />
+          <StyledView className="items-center">
+            <CustomInput
+              placeholder="Nhập email hoặc số điện thoại"
+              value={email}
+              onChangeText={setEmail}
+              containerClassName="h-12"
+              inputClassName="h-full font-vollkorn-regular"
+            />
+            <CustomInput
+              placeholder="Nhập mật khẩu"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              containerClassName="h-12"
+              inputClassName="h-full font-vollkorn-regular"
+            />
+          </StyledView>
           <StyledView className="items-end">
             <StyledTouchableOpacity onPress={handleForgotPassword}>
-              <StyledText className="text-blue-600 text-sm mb-12 mr-4">Quên mật khẩu?</StyledText>
+              <StyledText className="font-vollkorn-regular text-blue-600 text-sm mb-12 mr-4">Quên mật khẩu?</StyledText>
             </StyledTouchableOpacity>
           </StyledView>
-          <Button title="Đăng nhập" onPress={handleSignIn} />
+          <Button className="font-vollkorn-regular" title="Đăng nhập" onPress={handleSignIn} />
           
           <StyledView className="flex-row justify-center mt-2 mb-12">
-            <StyledText className="text-gray text-sm mb-12">Chưa là thành viên? </StyledText>
-            <StyledTouchableOpacity onPress={handleSignUp}>
-              <StyledText className="text-blue text-sm mb-12">Đăng ký ngay</StyledText>
+            <StyledText className="font-vollkorn-regular text-gray text-sm mb-12">Chưa là thành viên? </StyledText>
+            <StyledTouchableOpacity onPress={() => router.push('/(auth)/sign-up')}>
+              <StyledText className="font-vollkorn-regular text-blue text-sm mb-12">Đăng ký ngay</StyledText>
             </StyledTouchableOpacity>
           </StyledView>
           <SocialLoginButtons className="mt-8" 

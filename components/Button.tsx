@@ -14,10 +14,10 @@ const StyledText = styled(Text);
 const Button: React.FC<ButtonProps> = ({ title, onPress, className }) => {
   return (
     <StyledTouchableOpacity 
-      className={`bg-blue py-3 px-6 mx-12 rounded-full items-center justify-center shadow-md ${className}`} 
+      className={`${className} bg-blue py-3 px-6 mx-12 rounded-button items-center justify-center shadow-md`} 
       onPress={onPress}
     >
-      <StyledText className="text-white font-bold text-base">
+      <StyledText className="text-white font-vollkorn-bold text-base">
         {title}
       </StyledText>
     </StyledTouchableOpacity>

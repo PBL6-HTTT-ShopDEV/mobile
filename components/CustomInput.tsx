@@ -21,9 +21,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
   return (
     <StyledView className={`bg-white rounded-text-input px-5 py-3 mb-4 mx-4 mt-4 ${containerClassName}`}
     style={{
-      width: '90%', // Thêm chiều rộng cụ thể
-      maxHeight: 50, // Thêm chiều cao tối thiểu
-      borderWidth: 1, // Thêm viền để dễ nhìn
+      width: '90%',
+      maxHeight: 50,
+      borderWidth: 1,
       borderColor: '#ccc',
       shadowColor: "#000",
       shadowOffset: {
@@ -35,7 +35,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       elevation: 5,
     }}>
       <StyledTextInput
-        className={`text-base text-gray placeholder-gray h-full ${inputClassName}`}
+        className={`font-vollkorn-regular text-base text-gray placeholder-gray h-full ${inputClassName}`}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}

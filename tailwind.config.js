@@ -11,8 +11,16 @@ module.exports = {
       gray:'#707B81'
     },
     extend: {
+      fontFamily: {
+        'vollkorn-regular': ['Vollkorn-Regular'],
+        'vollkorn-medium': ['Vollkorn-Medium'],
+        'vollkorn-semibold': ['Vollkorn-SemiBold'],
+        'vollkorn-bold': ['Vollkorn-Bold'],
+        'vollkorn-italic': ['Vollkorn-Italic'],
+      },
       borderRadius: {
         'text-input': '12px',
+        'button': '12px',
       },
     },
   },
