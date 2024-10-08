@@ -1,11 +1,11 @@
-import { View, Text } from 'react-native'
 import React from 'react'
-
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { Text } from 'react-native'
 const FavouriteTour = () => {
   return (
-    <View>
-      <Text>FavouriteTour</Text>
-    </View>
+    <SafeAreaProvider className='flex-1'>
+     <Text>FavouriteTour</Text>
+    </SafeAreaProvider>
   )
 }
 

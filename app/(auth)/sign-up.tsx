@@ -104,7 +104,7 @@ const SignUp = () => {
           <Button className="font-vollkorn-regular" title="Đăng ký" onPress={handleSignUp} />
           <StyledView className="flex-row justify-center mt-5 mb-12">
             <StyledText className="font-vollkorn-regular text-gray text-sm">Đã có tài khoản? </StyledText>
-            <StyledTouchableOpacity onPress={() => router.push('/(auth)/sign-in')}>
+            <StyledTouchableOpacity onPress={() => router.replace('/(auth)/sign-in')}>
               <StyledText className="font-vollkorn-regular text-blue text-sm">Đăng nhập</StyledText>
             </StyledTouchableOpacity>
           </StyledView>
