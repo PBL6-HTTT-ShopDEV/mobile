@@ -7,6 +7,8 @@ import CustomInput from './CustomInput';
 import SocialLoginButtons from './SocialLoginButtons';
 import { Link } from 'expo-router';
 import TourCard from './TourCard';
+import FeedbackCard from './FeedbackCard';
+import ExpandablePanel from './ExpandablePanel';
 
 // Import các component khác ở đây
 const StyledView = styled(View);
@@ -19,7 +21,9 @@ const components = {
   HodophileLogo,
   CustomInput,
   SocialLoginButtons,
-  TourCard
+  TourCard,
+  FeedbackCard,
+  ExpandablePanel
 };
 
 const Playground = () => {
@@ -87,6 +91,19 @@ const Playground = () => {
               name="Sample Tour"
               description="Sample description"
               created_at="2023-01-01T00:00:00Z"
+              />
+            )}
+            {currentComponent === 'FeedbackCard' && (
+              <FeedbackCard
+                avatar={require('../assets/images/client-1.png')}
+                message="Sample message"
+                statement="Sample statement"
+              />
+            )}
+            {currentComponent === 'ExpandablePanel' && (
+              <ExpandablePanel
+                tittle="Sample Title"
+                content={['Sample content 1', 'Sample content 2']}
               />
             )}
           </StyledView>

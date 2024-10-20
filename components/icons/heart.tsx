@@ -1,11 +1,16 @@
 import * as React from "react"
 import Svg, { Path } from "react-native-svg"
-const SvgComponent = (props) => (
-  <Svg xmlns="http://www.w3.org/2000/svg" fill="none" {...props}>
+import { SvgProps } from "react-native-svg"
+
+const SvgComponent = ({ fill = "none", stroke = "#fff", ...props }: SvgProps) => (
+  <Svg width={46} height={44} viewBox="0 0 24 24" fill="none" {...props}>
     <Path
-      fill="#fff"
-      d="m23.225 36.51-.225.23-.247-.23C12.065 26.633 5 20.102 5 13.48c0-4.584 3.375-8.022 7.875-8.022 3.465 0 6.84 2.292 8.032 5.409h4.186c1.192-3.117 4.567-5.409 8.032-5.409 4.5 0 7.875 3.438 7.875 8.021 0 6.623-7.065 13.154-17.775 23.031Zm9.9-35.635C29.21.875 25.453 2.731 23 5.642 20.547 2.732 16.79.875 12.875.875 5.945.875.5 6.398.5 13.479c0 8.64 7.65 15.721 19.238 26.423L23 42.927l3.262-3.025C37.85 29.2 45.5 22.12 45.5 13.48 45.5 6.398 40.055.875 33.125.875Z"
+      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={1.5}
     />
   </Svg>
 )
+
 export default SvgComponent

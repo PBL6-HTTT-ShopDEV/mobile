@@ -21,6 +21,7 @@ module.exports = {
       borderRadius: {
         'text-input': '12px',
         'button': '12px',
+        'card': '20px',
       },
     },
   },
