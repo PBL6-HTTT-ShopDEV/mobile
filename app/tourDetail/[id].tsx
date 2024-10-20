@@ -9,6 +9,7 @@ import Heart from '../../components/icons/heart';
 import Button from '../../components/Button';
 import { router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import ExpandablePanel from '../../components/ExpandablePanel';
 const TourDetail: React.FC = () => {
   const { id } = useLocalSearchParams();
   const tourId = Array.isArray(id) ? id[0] : id;
@@ -88,56 +89,18 @@ const TourDetail: React.FC = () => {
                 </View>
                 <View className='flex-1 items-center'>
                   <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
+                  <View className="h-1 w-32 bg-blue rounded-full items-center" />
                 </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
-                <View className='flex-1 items-center'>
-                  <Text className="text-black font-vollkorn-bold text-2xl text-center mt-4">Lịch trình</Text>
-                  <View className="h-2 w-32 bg-blue rounded-full items-center" />
-                </View>
+                <ExpandablePanel tittle={'Ngày 1: TP. Đà Nẵng - Sân bay Nội Bài - Sapa (ăn trưa, tối)'} 
+                content={['Quý khách tập trung tại sân bay Đà Nẵng - ga đi trong nước. Hướng dẫn viên làm thủ tục cho đoàn đáp chuyến bay đi Hà Nội. Đến sân bay Nội Bài, xe và hướng dẫn viên Vietravel đón Quý khách khởi hành đi Sa Pa theo cung đường cao tốc hiện đại và dài nhất Việt Nam. Đến Sapa, Quý khách dùng cơm tối và nhận phòng nghỉ ngơi hoặc tự do dạo phố ngắm nhà thờ Đá Sapa, tự do thưởng thức đặc sản vùng cao như: thịt lợn cắp nách nướng, trứng nướng, rượu táo mèo, giao lưu với người dân tộc vùng cao. Nghỉ đêm tại Sapa.']}/>
+                <ExpandablePanel tittle={'Ngày 2: Sapa - Lao Chải - Tả Van - Sapa (ăn sáng, trưa, tối)'}
+                content={["Quý khách tập trung tại sân bay Đà Nẵng - ga đi trong nước. Hướng dẫn viên làm thủ tục cho đoàn đáp chuyến bay đi Hà Nội. Đến sân bay Nội Bài, xe và hướng dẫn viên Vietravel đón Quý khách khởi hành đi Sa Pa theo cung đường cao tốc hiện đại và dài nhất Việt Nam. Đến Sapa, Quý khách dùng cơm tối và nhận phòng nghỉ ngơi hoặc tự do dạo phố ngắm nhà thờ Đá Sapa, tự do thưởng thức đặc sản vùng cao như: thịt lợn cắp nách nướng, trứng nướng, rượu táo mèo, giao lưu với người dân tộc vùng cao. Nghỉ đêm tại Sapa."]}/>
+                <ExpandablePanel tittle={'Ngày 3: Sapa - Hà Nội ( sáng, trưa, tối)'}
+                content={["Quý khách tập trung tại sân bay Đà Nẵng - ga đi trong nước. Hướng dẫn viên làm thủ tục cho đoàn đáp chuyến bay đi Hà Nội. Đến sân bay Nội Bài, xe và hướng dẫn viên Vietravel đón Quý khách khởi hành đi Sa Pa theo cung đường cao tốc hiện đại và dài nhất Việt Nam. Đến Sapa, Quý khách dùng cơm tối và nhận phòng nghỉ ngơi hoặc tự do dạo phố ngắm nhà thờ Đá Sapa, tự do thưởng thức đặc sản vùng cao như: thịt lợn cắp nách nướng, trứng nướng, rượu táo mèo, giao lưu với người dân tộc vùng cao. Nghỉ đêm tại Sapa."]}/>
+                <ExpandablePanel tittle={'Ngày 4: Hà Nội - Hạ Long ( sáng, trưa, tối)'}
+                content={["Quý khách tập trung tại sân bay Đà Nẵng - ga đi trong nước. Hướng dẫn viên làm thủ tục cho đoàn đáp chuyến bay đi Hà Nội. Đến sân bay Nội Bài, xe và hướng dẫn viên Vietravel đón Quý khách khởi hành đi Sa Pa theo cung đường cao tốc hiện đại và dài nhất Việt Nam. Đến Sapa, Quý khách dùng cơm tối và nhận phòng nghỉ ngơi hoặc tự do dạo phố ngắm nhà thờ Đá Sapa, tự do thưởng thức đặc sản vùng cao như: thịt lợn cắp nách nướng, trứng nướng, rượu táo mèo, giao lưu với người dân tộc vùng cao. Nghỉ đêm tại Sapa."]}/>
+                <ExpandablePanel tittle={'Ngày 5: Hạ Long - Sân bay Nội Bài - Sân bay Đà Nẵng ( sáng, trưa)'}
+                content={["Quý khách tập trung tại sân bay Đà Nẵng - ga đi trong nước. Hướng dẫn viên làm thủ tục cho đoàn đáp chuyến bay đi Hà Nội. Đến sân bay Nội Bài, xe và hướng dẫn viên Vietravel đón Quý khách khởi hành đi Sa Pa theo cung đường cao tốc hiện đại và dài nhất Việt Nam. Đến Sapa, Quý khách dùng cơm tối và nhận phòng nghỉ ngơi hoặc tự do dạo phố ngắm nhà thờ Đá Sapa, tự do thưởng thức đặc sản vùng cao như: thịt lợn cắp nách nướng, trứng nướng, rượu táo mèo, giao lưu với người dân tộc vùng cao. Nghỉ đêm tại Sapa."]}/>
               </View>
           </ScrollView>
           <View className='absolute bottom-0 left-0 right-0 p-4'>

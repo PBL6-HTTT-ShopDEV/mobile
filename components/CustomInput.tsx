@@ -19,7 +19,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   ...rest 
 }) => {
   return (
-    <StyledView className={`bg-white rounded-text-input px-5 py-3 mb-4 mx-4 mt-4 ${containerClassName}`}
+    <StyledView className={`bg-white rounded-text-input px-5 py-3 mb-4 mt-4 ${containerClassName}`}
     style={{
       width: '90%',
       maxHeight: 50,
