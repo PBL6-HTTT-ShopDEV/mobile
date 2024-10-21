@@ -41,10 +41,10 @@ const TabLayout = () => {
               }}
             />
             <Tabs.Screen name='favourite-tour' options={{title:'Yêu thích',headerShown: false,tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="calendar-outline" size={size} color={color} />
+                  <AntDesign name="hearto" size={size} color={color} />
                 ),}}></Tabs.Screen>
             <Tabs.Screen name='schedule' options={{title:'Lịch trình',headerShown: false,tabBarIcon: ({ color, size }) => (
-                  <AntDesign name="hearto" size={size} color={color} />
+                  <Ionicons name="calendar-outline" size={size} color={color} />
                 ),}}></Tabs.Screen>
             <Tabs.Screen name='profile' options={{title:'Hồ sơ',headerShown: false,tabBarIcon: ({ color, size }) => (
                   <FontAwesome6 name="user" size={size} color={color} />

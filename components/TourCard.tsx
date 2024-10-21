@@ -9,23 +9,20 @@ import Location from './icons/location';
 import Calendar from './icons/calendar';
 import Button from './Button';
 import Clock from './icons/clock';
+import { useFavoriteTour } from '../hooks/FavouriteTourContext';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
-const TourCard: React.FC<ITour> = ({
-  tour_id,
-  image_url,
-  destination,
-  departure_location,
-  start_date,
-  end_date,
-  price
-}) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+const TourCard: React.FC<ITour> = (
+  props
+) => {
+  const { tour_id, image_url, destination, departure_location, start_date, end_date, price } = props;
   const isValidImageUrl = true;
+  const { favoriteTours, toggleFavoriteTour } = useFavoriteTour();
+  const isFavorite = favoriteTours.some(tour => tour.tour_id === tour_id);
 
   const handleViewDetails = () => {
     router.push({
@@ -38,10 +35,7 @@ const TourCard: React.FC<ITour> = ({
     <StyledView key={tour_id} className="bg-white rounded-lg p-4 m-5 shadow-md overflow-hidden shadow-lg shadow-gray" style={{ elevation: 5 }}>
       <StyledTouchableOpacity 
         className="absolute top-4 right-4 z-10"
-        onPress={() => {
-          // Thêm logic để thêm/xóa khỏi danh sách yêu thích ở đây
-          setIsFavorite(!isFavorite);
-        }}
+        onPress={() => toggleFavoriteTour(props)}
       >
         <Heart className={`w-11 h-11 m-1`} fill={isFavorite ? '#FF0000' : 'none'} stroke='#ffffff'/>
       </StyledTouchableOpacity>
