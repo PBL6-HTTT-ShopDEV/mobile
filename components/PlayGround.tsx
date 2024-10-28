@@ -9,6 +9,7 @@ import { Link } from 'expo-router';
 import TourCard from './TourCard';
 import FeedbackCard from './FeedbackCard';
 import ExpandablePanel from './ExpandablePanel';
+import ModalInput from './ModalInput';
 
 // Import các component khác ở đây
 const StyledView = styled(View);
@@ -23,7 +24,8 @@ const components = {
   SocialLoginButtons,
   TourCard,
   FeedbackCard,
-  ExpandablePanel
+  ExpandablePanel,
+  ModalInput
 };
 
 const Playground = () => {
