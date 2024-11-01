@@ -15,7 +15,19 @@ const DetailsLayout = () => {
         options={{
           headerShown: false,
         }}/>
+      <Stack.Screen
+        name="[id]/payment"
+        options={{
+          headerShown: false,
+        }}/>
+        <Stack.Screen
+        name="[id]/success"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
+    
   );
 };
 

@@ -1,4 +1,4 @@
-import { Button, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { Button, ScrollView, View, Text, TouchableOpacity, NativeEventEmitter } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -8,7 +8,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import CustomInput from '../../../components/CustomInput';
 
 const Booking: React.FC = () => {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [isMounted, setIsMounted] = useState(false);
   const [adultCount, setAdultCount] = useState(0);
   const [childCount, setChildCount] = useState(0);
@@ -138,7 +138,21 @@ const Booking: React.FC = () => {
       {/* Hiển thị thông tin cho trẻ em */}
       {renderChildren()}
     </View>
+    <View className=' bottom-0 left-0 right-0 p-4'>
+        <TouchableOpacity 
+    onPress={() => router.push({
+      pathname: "/tourDetail/[id]/payment",
+      params: { id }
+    })}
+    className="bg-blue py-4 rounded-lg"
+  >
+    <Text className="text-white text-center text-lg font-vollkorn-bold">
+      Tiếp tục thanh toán
+    </Text>
+  </TouchableOpacity>
+          </View>
         </ScrollView>
+        
       </View>
     </View>
   )
