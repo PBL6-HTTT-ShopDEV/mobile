@@ -121,6 +121,11 @@ const Playground = () => {
               <Text className="text-white text-center">Go to Home</Text>
             </Pressable>
           </Link>
+          <Link href={"/tours/search" as const} asChild>
+            <Pressable className="bg-blue-500 p-3 rounded-lg">
+              <Text className="text-white text-center">Go to Tour search</Text>
+            </Pressable>
+          </Link>
         </StyledView>
       </StyledView>
     </StyledScrollView>

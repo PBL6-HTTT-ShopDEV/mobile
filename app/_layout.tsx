@@ -18,6 +18,7 @@ const RootLayout = () => {
       <Stack.Screen name='(auth)' options={{headerShown: false}}/>
       <Stack.Screen name='(tabs)' options={{headerShown: false}}/>
       <Stack.Screen name='tourDetail' options={{headerShown: false}}/>
+      <Stack.Screen name='tours' options={{headerShown: false}}/>
     </Stack></FavoriteTourProvider>
     </AuthProvider>
   )
