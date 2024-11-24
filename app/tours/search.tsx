@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator,Text } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ITour } from '../../types/Tour.types';
 import { getTours } from '../../models/tours';
@@ -71,13 +71,17 @@ const SearchPage = () => {
       {loading ? (
         <ActivityIndicator size="large" color="#24ABEC" style={{ position: 'absolute', top: '50%', left: '50%' }} />
       ) : (
-        <FlatList
-          data={tours}
-          renderItem={renderTourCard}
-          keyExtractor={(item) => item.tour_id.toString()}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
-          showsVerticalScrollIndicator={false}
-        />
+        
+        <View >
+          <Text className='mx-10 font-vollkorn-bold text-2xl'>Kết quả tìm kiếm</Text>
+          <FlatList
+        data={tours}
+        renderItem={renderTourCard}
+        keyExtractor={(item) => item.tour_id.toString()}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+      />
+      </View>
       )}
     </View>
   );
