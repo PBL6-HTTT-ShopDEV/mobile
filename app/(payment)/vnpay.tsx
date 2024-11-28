@@ -18,55 +18,22 @@ const VNPayScreen = () => {
   const handleNavigationStateChange = (navState: { url: string }) => {
     if (navState.url.includes('myapp://payment-return')) {
       try {
-        // 1. Decode URL trước khi xử lý
-        const decodedUrl = decodeURIComponent(navState.url)
+        const url = new URL(navState.url)
+        const params = Object.fromEntries(url.searchParams.entries())
         
-        // 2. Parse URL và lấy params
-        const urlObj = new URL(decodedUrl.replace('myapp://', 'http://'))
-        const searchParams = new URLSearchParams(urlObj.search)
-        
-        // 3. Chuyển params về object và decode các giá trị
-        const params = Object.fromEntries(
-          Array.from(searchParams.entries()).map(([key, value]) => [
-            key,
-            decodeURIComponent(value)
-          ])
-        )
-        
-        // Validate và xử lý response
-        if (validatePaymentReturn(params)) {
-          if (params.vnp_ResponseCode === '00') {
-            // Thanh toán thành công
-            Alert.alert(
-              'Thành công',
-              'Thanh toán đã được xử lý thành công',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => router.replace('/(tabs)/home')
-                }
-              ]
-            )
-          } else {
-            // Thanh toán thất bại
-            const errorMessage = params.vnp_Message || 'Thanh toán không thành công'
-            Alert.alert(
-              'Thất bại',
-              errorMessage,
-              [
-                {
-                  text: 'OK',
-                  onPress: () => router.replace('/(tabs)/home')
-                }
-              ]
-            )
-          }
+        if (params.vnp_ResponseCode === '00' && params.vnp_TransactionStatus === '00') {
+          router.replace({
+            pathname: '/(payment)/payment-return',
+            params
+          })
         } else {
-          throw new Error('Chữ ký không hợp lệ')
+          Alert.alert('Thất bại', 'Thanh toán không thành công')
+          router.replace('/(tabs)/home')
         }
       } catch (error) {
-        console.error('Error processing payment:', error)
-        Alert.alert('Lỗi', 'Có lỗi xảy ra trong quá trình xử lý')
+        console.error('Payment processing error:', error)
+        Alert.alert('Lỗi', 'Có lỗi xảy ra trong quá trình xử lý thanh toán')
+        router.replace('/(tabs)/home')
       }
     }
   }
