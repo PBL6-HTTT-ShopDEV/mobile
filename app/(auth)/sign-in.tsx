@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import CustomInput from '../../components/CustomInput';
 import HodophileLogo from '../../components/HodophileLogo';
 import SocialLoginButtons from '../../components/SocialLoginButtons';
-import { router } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/AuthContext';
 import { LoginPayload } from '../../types/User.types';
 
@@ -20,7 +20,9 @@ const StyledLinearGradient = styled(LinearGradient);
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, socialLogin, loading } = useAuth();
+  const { login } = useAuth();
+  const router = useRouter();
+
   const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ email và mật khẩu');
@@ -33,6 +35,7 @@ const SignIn = () => {
         password
       };
       await login(credentials);
+      router.replace('/(tabs)/home');
     } catch (error) {
       Alert.alert('Lỗi đăng nhập', error instanceof Error ? error.message : 'Đã có lỗi xảy ra');
     }

@@ -13,10 +13,21 @@ export interface IUser {
     password: string;
   }
   
+  export interface User {
+    id?: string;
+    name?: string;
+    email?: string;
+    // thêm các field khác nếu cần
+  }
+  
   export interface LoginResponse {
-    user: Omit<IUser, 'password'>;
-    token: string;
-    refreshToken: string;
+    metadata: {
+      tokens: {
+        accessToken: string;
+        refreshToken: string;
+      };
+      user: User;
+    };
   }
   
   export interface AuthState {

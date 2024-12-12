@@ -6,6 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import HodophileLogo from '../../components/HodophileLogo';
 import CustomInput from '../../components/CustomInput';
 import { router } from 'expo-router';
+import { authService } from '../../services/authService';
+import { Alert } from 'react-native';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -32,11 +34,34 @@ const SignUp = () => {
     }
   }, [password, confirmPassword]);
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     if (passwordError) {
       return;
     }
-    console.log('Đăng ký');
+    
+    try {
+      const userData = {
+        email,
+        password,
+        name: fullName,
+        phone: phoneNumber,
+        address
+      };
+      
+      console.log('Request:', userData);
+      
+      const response = await authService.signup(userData);
+      console.log('Response:', response);
+      
+      Alert.alert('Thành công', 'Đăng ký tài khoản thành công!', [
+        {
+          text: 'OK',
+          onPress: () => router.replace('/(auth)/sign-in')
+        }
+      ]);
+    } catch (error) {
+      Alert.alert('Lỗi', error instanceof Error ? error.message : 'Đã có lỗi xảy ra');
+    }
   };
 
   return (

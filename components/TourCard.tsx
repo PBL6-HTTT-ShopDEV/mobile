@@ -49,13 +49,13 @@ const TourCard: React.FC<ITour> = (
         <StyledView className="flex-row justify-between mt-2">
           <StyledView className="flex-row items-center">
             <Ticket className="w-9 h-9 mr-1 ml-1" />
-            <StyledText className="text-sm text-gray">
+            <StyledText className="text-sm ">
               Mã tour: <StyledText className="font-vollkorn">{tour_id}</StyledText>
             </StyledText>
           </StyledView>
           <StyledView className="flex-row items-center">
             <Clock className="w-9 h-9 mr-1 mb-2" />
-            <StyledText className="text-sm text-gray">
+            <StyledText className="text-sm ">
               Thời gian: {start_date}N{end_date}Đ
             </StyledText>
           </StyledView>
