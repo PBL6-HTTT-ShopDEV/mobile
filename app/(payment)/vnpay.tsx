@@ -16,59 +16,40 @@ const VNPayScreen = () => {
   }, [paymentUrl])
 
   const handleNavigationStateChange = (navState: { url: string }) => {
-    if (navState.url.includes('myapp://payment-return')) {
+    if (navState.url.includes('vnp_ResponseCode')) {
       try {
-        // 1. Decode URL trước khi xử lý
-        const decodedUrl = decodeURIComponent(navState.url)
-        
-        // 2. Parse URL và lấy params
-        const urlObj = new URL(decodedUrl.replace('myapp://', 'http://'))
+        const urlObj = new URL(navState.url)
         const searchParams = new URLSearchParams(urlObj.search)
+        const params = Object.fromEntries(searchParams.entries())
         
-        // 3. Chuyển params về object và decode các giá trị
-        const params = Object.fromEntries(
-          Array.from(searchParams.entries()).map(([key, value]) => [
-            key,
-            decodeURIComponent(value)
-          ])
-        )
-        
-        // Validate và xử lý response
-        if (validatePaymentReturn(params)) {
-          if (params.vnp_ResponseCode === '00') {
-            // Thanh toán thành công
-            Alert.alert(
-              'Thành công',
-              'Thanh toán đã được xử lý thành công',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => router.replace('/(tabs)/home')
-                }
-              ]
-            )
-          } else {
-            // Thanh toán thất bại
-            const errorMessage = params.vnp_Message || 'Thanh toán không thành công'
-            Alert.alert(
-              'Thất bại',
-              errorMessage,
-              [
-                {
-                  text: 'OK',
-                  onPress: () => router.replace('/(tabs)/home')
-                }
-              ]
-            )
-          }
-        } else {
-          throw new Error('Chữ ký không hợp lệ')
-        }
+        router.replace({
+          pathname: '/(payment)/payment-return',
+          params: params
+        })
       } catch (error) {
-        console.error('Error processing payment:', error)
-        Alert.alert('Lỗi', 'Có lỗi xảy ra trong quá trình xử lý')
+        console.error('Error processing payment response:', error)
+        Alert.alert('Lỗi', 'Có lỗi xảy ra trong quá trình xử lý thanh toán')
+        router.replace('/(tabs)/home')
       }
     }
+  }
+
+  const getErrorMessage = (responseCode: string = ''): string => {
+    const errorMessages: Record<string, string> = {
+      '07': 'Trừ tiền thành công. Giao dịch bị nghi ngờ (liên quan tới lừa đảo, giao dịch bất thường).',
+      '09': 'Thẻ/Tài khoản chưa đăng ký dịch vụ InternetBanking.',
+      '10': 'Xác thực thông tin không đúng quá 3 lần.',
+      '11': 'Đã hết hạn chờ thanh toán.',
+      '12': 'Thẻ/Tài khoản bị khóa.',
+      '13': 'Nhập sai mật khẩu OTP.',
+      '24': 'Giao dịch không thành công do: Khách hàng hủy giao dịch.',
+      '51': 'Số dư không đủ.',
+      '65': 'Tài khoản vượt hạn mức giao dịch.',
+      '75': 'Ngân hàng thanh toán đang bảo trì.',
+      '79': 'Nhập sai mật khẩu quá số lần quy định.',
+      '99': 'Các lỗi khác.',
+    }
+    return errorMessages[responseCode] || 'Giao dịch không thành công.'
   }
 
   if (!paymentUrl) {

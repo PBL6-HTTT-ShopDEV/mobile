@@ -35,7 +35,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       elevation: 5,
     }}>
       <StyledTextInput
-        className={`font-vollkorn-regular text-base text-gray placeholder-gray h-full ${inputClassName}`}
+        className={`font-vollkorn-regular text-base text-gray-200 placeholder-gray-200 h-full ${inputClassName}`}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}

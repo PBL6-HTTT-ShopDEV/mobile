@@ -51,14 +51,14 @@ const handleVNPayPayment = async ({ amount, orderType = 'other' }: IPaymentParam
       vnp_Version: "2.1.0",
       vnp_Command: "pay",
       vnp_TmnCode: VNP_PARAMS.vnp_TmnCode,
-      vnp_Amount: amount,
+      vnp_Amount: amount*100,
       vnp_CreateDate: dayjs().format('YYYYMMDDHHmmss'),
       vnp_CurrCode: VNP_PARAMS.vnp_CurrCode,
       vnp_IpAddr: ipAddr,
       vnp_Locale: VNP_PARAMS.vnp_Locale,
       vnp_OrderInfo: 'Payment',
       vnp_OrderType: VNP_PARAMS.vnp_OrderType,
-      vnp_ReturnUrl: encodeURIComponent('myapp://payment-return'),
+      vnp_ReturnUrl: encodeURIComponent('https://sandbox.vnpayment.vn/paymentv2/payment-return'),
       vnp_TxnRef: dayjs().unix().toString()
     }
 

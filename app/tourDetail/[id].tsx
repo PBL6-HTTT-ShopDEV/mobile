@@ -77,14 +77,14 @@ const TourDetail: React.FC = () => {
           <ScrollView className="flex-1 -mt-12 bg-white rounded-tl-card rounded-tr-card" contentContainerStyle={{ paddingBottom: 80 }}>
               <View className="px-4 py-4 " >
                 <Text className="text-2xl font-bold text-blue">{tour.destination}</Text>
-                <Text className="text-lg text-gray">{tour.departure_location}</Text>
+                <Text className="text-lg text-gray-200">{tour.departure_location}</Text>
                 <View className="flex-row items-center justify-between mt-4">
                   <View className="flex-row items-center">
                     <Text className="text-red font-bold text-lg">Giá: {tour.price}VNĐ</Text>
-                    <Text className="text-gray text-sm ml-2">/người</Text>
+                    <Text className="text-gray-200 text-sm ml-2">/người</Text>
                   </View>
                   <View className="flex-row items-center">
-                    <Text className="text-gray text-sm">{nights} đêm</Text>
+                    <Text className="text-gray-200 text-sm">{nights} đêm</Text>
                   </View>
                 </View>
                 <View className='flex-1 items-center'>
