@@ -1,90 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, ActivityIndicator,Text } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ITour } from '../../types/Tour.types';
-import { getTours } from '../../models/tours';
-import TourCard from '../../components/TourCard';
-import SearchBar from '../../components/SearchBar';
+// import React, { useState, useEffect } from 'react';
+// import { View, FlatList, ActivityIndicator,Text } from 'react-native';
+// import { useRouter, useLocalSearchParams } from 'expo-router';
+// import { ITour } from '../../types/Tour.types';
+// import { getTours } from '../../models/tours';
+// import TourCard from '../../components/TourCard';
+// import SearchBar from '../../components/SearchBar';
 
-const SearchPage = () => {
-  const [tours, setTours] = useState<ITour[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { q } = useLocalSearchParams();
-  const router = useRouter();
-  console.log("Query Param q:", q);
+// const SearchPage = () => {
+//   const [tours, setTours] = useState<ITour[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const { q } = useLocalSearchParams();
+//   const router = useRouter();
+//   console.log("Query Param q:", q);
 
-  useEffect(() => {
-    let isMounted = true;
+//   useEffect(() => {
+//     let isMounted = true;
 
-    const searchTours = async () => {
-      try {
-        const response = await getTours('1', { destination: q as string }, '16');
-        console.log('API response:', response);
-        if (isMounted && response && response.data) {
-          const filteredTours = response.data.filter((tour): tour is ITour => tour !== undefined);
-          setTours(filteredTours);
-        }
-      } catch (error) {
-        console.error('Error fetching tours:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+//     const searchTours = async () => {
+//       try {
+//         const response = await getTours('1', { destination: q as string }, '16');
+//         console.log('API response:', response);
+//         if (isMounted && response && response.data) {
+//           const filteredTours = response.data.filter((tour): tour is ITour => tour !== undefined);
+//           setTours(filteredTours);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching tours:', error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
 
-    if (q) {
-      searchTours();
-    }
+//     if (q) {
+//       searchTours();
+//     }
 
-    return () => {
-      isMounted = false;
-    };
-  }, [q]);
+//     return () => {
+//       isMounted = false;
+//     };
+//   }, [q]);
 
-  const renderTourCard = ({ item, index }: { item: ITour; index: number }) => (
-    <TourCard
-      key={index.toString()}
-      tour_id={item.tour_id}
-      name={item.name}
-      description={item.description}
-      price={item.price}
-      start_date={item.start_date}
-      end_date={item.end_date}
-      destination={item.destination}
-      image_url={item.image_url}
-      departure_location={item.departure_location}
-      created_at={item.created_at}
-    />
-  );
+//   const renderTourCard = ({ item, index }: { item: ITour; index: number }) => (
+//     <TourCard
+//       key={index.toString()}
+//       _id={item._id}
+//       name={item.name}
+//       description={item.description}
+//       price={item.price}
+//       start_date={item.start_date}
+//       end_date={item.end_date}
+//       destination={item.destination}
 
-  const handleSearch = (searchTerm: string) => {
-    router.push({
-      pathname: '/tours/search',
-      params: { q: searchTerm }
-    });
-  };
+//       departure_location={item.departure_location}
+//       created_at={item.created_at}
+//     />
+//   );
 
-  return (
-    <View className="flex-1 bg-white">
-      <View className="p-4">
-        <SearchBar onSearch={handleSearch} />
-      </View>
-      {loading ? (
-        <ActivityIndicator size="large" color="#24ABEC" style={{ position: 'absolute', top: '50%', left: '50%' }} />
-      ) : (
+//   const handleSearch = (searchTerm: string) => {
+//     router.push({
+//       pathname: '/tours/search',
+//       params: { q: searchTerm }
+//     });
+//   };
+
+//   return (
+//     <View className="flex-1 bg-white">
+//       <View className="p-4">
+//         <SearchBar onSearch={handleSearch} />
+//       </View>
+//       {loading ? (
+//         <ActivityIndicator size="large" color="#24ABEC" style={{ position: 'absolute', top: '50%', left: '50%' }} />
+//       ) : (
         
-        <View >
-          <Text className='mx-10 font-vollkorn-bold text-2xl'>Kết quả tìm kiếm</Text>
-          <FlatList
-        data={tours}
-        renderItem={renderTourCard}
-        keyExtractor={(item) => item.tour_id.toString()}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      />
-      </View>
-      )}
-    </View>
-  );
-};
+//         <View >
+//           <Text className='mx-10 font-vollkorn-bold text-2xl'>Kết quả tìm kiếm</Text>
+//           <FlatList
+//         data={tours}
+//         renderItem={renderTourCard}
+//         keyExtractor={(item) => item._id.toString()}
+//         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
+//         showsVerticalScrollIndicator={false}
+//       />
+//       </View>
+//       )}
+//     </View>
+//   );
+// };
 
-export default SearchPage;
+// export default SearchPage;
