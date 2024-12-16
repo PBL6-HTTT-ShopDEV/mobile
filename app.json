@@ -2,10 +2,10 @@
   "expo": {
     "name": "Hodophile",
     "slug": "Hodophile",
+    "scheme": "hodophile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.svg",
-    "scheme": "hodophile",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",

@@ -20,7 +20,7 @@ export const tourService = {
       });
 
       const data = await response.json();
-      console.log('Tour Response:', data);
+      console.log('Tours Response:', data);
       
       if (!response.ok) {
         throw new Error(data.message || 'Không thể lấy danh sách tour');
@@ -36,7 +36,7 @@ export const tourService = {
       }
 
       const mappedTours = data.metadata.map(tour => ({
-        _id: tour._id.replace(/ObjectId\('(.+)'\)/, '$1'),
+        _id: tour._id,
         name: tour.name,
         price: tour.price,
         destination: tour.destination,
@@ -71,53 +71,63 @@ export const tourService = {
 
   async getTourById(id: string): Promise<IApiResponse<ITour>> {
     try {
-      const cleanId = id.replace(/ObjectId\('(.+)'\)/, '$1');
+      console.log('Original ID:', id);
       
-      const url = `${API_CONFIG.BASE_URL}/tour/${cleanId}`;
-      console.log('Calling Tour Detail API:', url);
+      // Đúng theo router backend
+      const url = `${API_CONFIG.BASE_URL}/tourbyid?tourId=${id}`;
+      console.log('Calling API URL:', url);
 
       const response = await fetch(url, {
         method: 'GET',
-        headers: API_CONFIG.HEADERS
+        headers: {
+          ...API_CONFIG.HEADERS,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
       });
       
       const data = await response.json();
-      console.log('Tour Detail Response:', data);
+      console.log('API Response:', data);
 
-      if (!response.ok) {
+      if (!response.ok || data.status === 'error') {
         throw new Error(data.message || 'Không thể lấy thông tin tour');
       }
 
       const tourData = data.metadata;
-      const mappedTour = {
-        _id: tourData._id.replace(/ObjectId\('(.+)'\)/, '$1'),
-        name: tourData.name,
-        price: tourData.price,
-        destination: tourData.destination,
-        departure_location: tourData.departure_location,
-        start_date: tourData.start_date,
-        end_date: tourData.end_date,
-        description: tourData.description,
-        thumbnail_url: tourData.thumbnail,
-        images: tourData.images || [],
-        status: tourData.status,
-        max_group_size: tourData.max_group_size,
-        created_at: tourData.created_at,
-        updated_at: tourData.updated_at,
-        created_by: tourData.created_by,
-        updated_by: tourData.updated_by || tourData.created_by
-      };
+      console.log('Tour Data:', tourData);
+
+      const defaultImage = 'https://via.placeholder.com/300x200';
       
       return {
         status: 'success',
         message: data.message || 'Lấy thông tin tour thành công',
-        data: mappedTour
+        data: {
+          _id: tourData._id,
+          name: tourData.name || '',
+          price: tourData.price || 0,
+          destination: tourData.destination || '',
+          departure_location: tourData.departure_location || '',
+          start_date: tourData.start_date || new Date().toISOString(),
+          end_date: tourData.end_date || new Date().toISOString(),
+          description: tourData.description || '',
+          thumbnail_url: tourData.thumbnail || tourData.thumbnail_url || defaultImage,
+          images: (tourData.images || tourData.image_url || []).map(img => img || defaultImage).filter(Boolean),
+          status: tourData.status || 'active',
+          max_group_size: tourData.max_group_size || 0,
+          created_at: tourData.created_at || new Date().toISOString(),
+          updated_at: tourData.updated_at || new Date().toISOString(),
+          created_by: tourData.created_by || '',
+          updated_by: tourData.updated_by || tourData.created_by || '',
+          schedule: tourData.schedule || []
+        }
       };
     } catch (error) {
       console.error("Error details:", error);
       return {
         status: 'error',
-        message: error instanceof Error ? error.message : 'Đã có lỗi xảy ra'
+        message: error instanceof Error ? error.message : 'Đã có lỗi xảy ra',
+        data: null
       };
     }
   }
