@@ -23,6 +23,7 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
 
   useEffect(() => {
     if (password !== confirmPassword) {
@@ -34,25 +35,97 @@ const SignUp = () => {
     }
   }, [password, confirmPassword]);
 
-  const handleSignUp = async () => {
-    if (passwordError) {
-      return;
-    }
+  const validateDateOfBirth = (date: string) => {
+    const birthDate = new Date(date);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
     
+    if (age < 18 || age > 100) {
+      return 'Tuổi phải từ 18 đến 100';
+    }
+    return '';
+  };
+
+  const validateForm = () => {
+    if (!email || !password || !confirmPassword || !fullName) {
+      Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin bắt buộc');
+      return false;
+    }
+
+    if (passwordError) {
+      Alert.alert('Lỗi', passwordError);
+      return false;
+    }
+
+    const dateError = validateDateOfBirth(dateOfBirth);
+    if (dateError) {
+      Alert.alert('Lỗi', dateError);
+      return false;
+    }
+
+    // Validate phone number format
+    if (phoneNumber && !/^[0-9]{10}$/.test(phoneNumber)) {
+      Alert.alert('Lỗi', 'Số điện thoại không hợp lệ');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSignUp = async () => {
     try {
-      const userData = {
-        email,
-        password,
+      if (!validateForm()) return;
+      
+      console.log('Bắt đầu đăng ký với thông tin:', {
         name: fullName,
-        phone: phoneNumber,
-        address
-      };
+        email,
+        password
+      });
+
+      // Bước 1: Đăng ký tài khoản
+      const signupResponse = await authService.signup({
+        name: fullName,
+        email,
+        password
+      });
+
+      console.log('Kết quả đăng ký:', signupResponse);
       
-      console.log('Request:', userData);
-      
-      const response = await authService.signup(userData);
-      console.log('Response:', response);
-      
+      // Sửa cách truy cập ID người dùng theo cấu trúc response mới
+      const userId = signupResponse.metadata?.metadata?.account?._id;
+      console.log('User ID:', userId);
+
+      // Bước 2: Cập nhật thông tin profile
+      if (userId) {
+        const updateData = {
+          name: fullName,
+          phone_number: phoneNumber,
+          address,
+          date_of_birth: dateOfBirth
+        };
+        
+        console.log('Cập nhật profile với dữ liệu:', updateData);
+        
+        try {
+          const updateResponse = await authService.updateProfile(
+            userId, 
+            updateData
+          );
+          console.log('Kết quả cập nhật profile:', updateResponse);
+        } catch (updateError) {
+          console.error('Lỗi cập nhật profile:', updateError);
+          Alert.alert(
+            'Cảnh báo', 
+            'Tài khoản đã được tạo nhưng chưa cập nhật được thông tin chi tiết'
+          );
+          router.replace('/(auth)/sign-in');
+          return;
+        }
+      } else {
+        console.error('Không tìm thấy ID người dùng trong response:', signupResponse);
+        throw new Error('Không thể lấy thông tin người dùng sau khi đăng ký');
+      }
+
       Alert.alert('Thành công', 'Đăng ký tài khoản thành công!', [
         {
           text: 'OK',
@@ -60,6 +133,7 @@ const SignUp = () => {
         }
       ]);
     } catch (error) {
+      console.error('Lỗi đăng ký:', error);
       Alert.alert('Lỗi', error instanceof Error ? error.message : 'Đã có lỗi xảy ra');
     }
   };
@@ -124,6 +198,13 @@ const SignUp = () => {
             value={address}
             onChangeText={setAddress}
             containerClassName="h-12 mb-12"
+            inputClassName="h-full"
+          />
+          <CustomInput
+            placeholder="Ngày sinh (YYYY-MM-DD)"
+            value={dateOfBirth}
+            onChangeText={setDateOfBirth}
+            containerClassName="h-12"
             inputClassName="h-full"
           />
           <Button className="font-vollkorn-regular" title="Đăng ký" onPress={handleSignUp} />

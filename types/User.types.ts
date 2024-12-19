@@ -13,21 +13,37 @@ export interface IUser {
     password: string;
   }
   
+  export interface SignupPayload {
+    name: string;
+    email: string;
+    password: string;
+  }
+  
   export interface User {
-    id?: string;
-    name?: string;
-    email?: string;
-    // thêm các field khác nếu cần
+    _id: string;
+    email: string;
+    name: string;
+    phone_number?: string;
+    address?: string;
+    date_of_birth?: string;
+    avatar?: string;
+    role?: string;
+    status?: string;
+    created_at?: Date;
+    updated_at?: Date;
   }
   
   export interface LoginResponse {
+    code: number;
+    message: string;
     metadata: {
       tokens: {
         accessToken: string;
-        refreshToken: string;
+        refreshToken?: string;
       };
-      user: User;
+      account: User;
     };
+    status: string;
   }
   
   export interface AuthState {
@@ -43,4 +59,12 @@ export interface IUser {
     logout: () => Promise<void>;
     socialLogin: (provider: 'facebook' | 'google' | 'twitter', token: string) => Promise<void>;
     updateUser: (userData: Partial<Omit<IUser, 'password'>>) => Promise<void>;
+  }
+  
+  export interface UpdateProfilePayload {
+    name?: string;
+    phone_number?: string;
+    address?: string;
+    date_of_birth?: string;
+    avatar?: string;
   }
