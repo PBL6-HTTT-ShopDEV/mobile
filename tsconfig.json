@@ -4,6 +4,8 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "**/*.png"
+    "**/*.png",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
   ]
 }

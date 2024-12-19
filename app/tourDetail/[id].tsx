@@ -138,13 +138,52 @@ const TourDetail: React.FC = () => {
               <View className="h-1 w-32 bg-blue rounded-full items-center" />
             </View>
 
-            {tour.schedule && tour.schedule.map((day, index) => (
-              <ExpandablePanel
-                key={index}
-                tittle={`Ngày ${index + 1}: ${day.title}`}
-                content={[day.description]}
-              />
-            ))}
+            <ExpandablePanel
+              tittle="Ngày 1: TP. Đà Nẵng - Sân bay Nội Bài - Sapa (ăn trưa, tối)"
+              content={[
+                "Quý khách tập trung tại sân bay Đà Nẵng - ga đi trong nước. Hướng dẫn viên làm thủ tục cho đoàn đáp chuyến bay đi Hà Nội. Đến sân bay Nội Bài, xe và hướng dẫn viên Vietravel đón Quý khách khởi hành đi Sa Pa theo cung đường cao tốc hiện đại và dài nhất Việt Nam. Đến Sapa, Quý khách dùng cơm tối và nhận phòng nghỉ ngơi hoặc tự do dạo phố ngắm nhà thờ Đá Sapa, tự do thưởng thức đặc sản vùng cao như: thịt lợn cắp nách nướng, trứng nướng, rượu táo mèo, giao lưu với người dân tộc vùng cao. Nghỉ đêm tại Sapa."
+              ]}
+            />
+
+            <ExpandablePanel
+              tittle="Ngày 2: Sapa - Fansipan hùng vĩ (sáng, trưa, tối)"
+              content={[
+                "Quý khách tập trung tại sân bay Đà Nẵng - ga đi trong nước. Hướng dẫn viên làm thủ tục cho đoàn đáp chuyến bay đi Hà Nội. Đến sân bay Nội Bài, xe và hướng dẫn viên Vietravel đón Quý khách khởi hành đi Sa Pa theo cung đường cao tốc hiện đại và dài nhất Việt Nam. Đến Sapa, Quý khách dùng cơm tối và nhận phòng nghỉ ngơi hoặc tự do dạo phố ngắm nhà thờ Đá Sapa, tự do thưởng thức đặc sản vùng cao như: thịt lợn cắp nách nướng, trứng nướng, rượu táo mèo, giao lưu với người dân tộc vùng cao. Nghỉ đêm tại Sapa."
+              ]}
+            />
+
+            <View className='flex-1 items-center mt-4'>
+              <Text className="text-black font-vollkorn-bold text-2xl text-center">
+                Thông tin thêm về chuyến đi
+              </Text>
+              <View className="h-1 w-32 bg-blue rounded-full items-center" />
+            </View>
+
+            <ExpandablePanel
+              tittle="Giá tour bao gồm"
+              content={[
+                "• Xe tham quan (15, 25, 35, 45 chỗ tùy theo số lượng khách) theo chương trình",
+                "• Khách sạn theo tiêu chuẩn 2 khách/phòng hoặc 3 khách/phòng",
+                "• Vé tham quan theo chương trình",
+                "• Hướng dẫn viên tiếng Việt nối tuyến",
+                "• Bảo hiểm du lịch với mức bồi thường cao nhất 120.000.000đ/vụ",
+                "• Nước suối + Khăn lạnh",
+                "• Thuế VAT"
+              ]}
+            />
+
+            <ExpandablePanel
+              tittle="Giá tour không bao gồm"
+              content={[
+                "• Xe tham quan (15, 25, 35, 45 chỗ tùy theo số lượng khách) theo chương trình",
+                "• Khách sạn theo tiêu chuẩn 2 khách/phòng hoặc 3 khách/phòng",
+                "• Vé tham quan theo chương trình",
+                "• Hướng dẫn viên tiếng Việt nối tuyến",
+                "• Bảo hiểm du lịch với mức bồi thường cao nhất 120.000.000đ/vụ",
+                "• Nước suối + Khăn lạnh",
+                "• Thuế VAT"
+              ]}
+            />
           </View>
         </ScrollView>
 

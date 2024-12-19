@@ -15,7 +15,9 @@ import Header from '../../components/Header'
 import TourCard from '../../components/TourCard'
 import { useTour } from '../../hooks/useTour'
 import { ITour } from '../../types/Tour.types'
-
+import { mockFeedback } from '../../data/mockFeedback'
+import FeedbackCard from '../../components/FeedbackCard'
+import { IFeedback } from '../../types/Feedback.type'
 const HEADER_MAX_HEIGHT = 256;
 const HEADER_MIN_HEIGHT = 80;
 
@@ -27,6 +29,10 @@ const Home = () => {
   useEffect(() => {
     getTours(6);
   }, []);
+
+  const renderFeedbackCard = ({ item }: { item: IFeedback }) => (
+    <FeedbackCard {...item} />
+  );
 
   const renderTourCard = ({ item }: { item: ITour }) => (
     <TourCard {...item} />
@@ -58,25 +64,26 @@ const Home = () => {
           >
             <View className="mt-5 bg-white">
               <View className="px-16 mr-5 flex-row justify-between items-center">
-                <Text className="text-2xl font-vollkorn-bold">
+                <Text className="text-2xl ml-6 font-vollkorn-bold">
                   Tour thịnh hành
                 </Text>
                 <TouchableOpacity 
                   onPress={() => router.push('/tours/all')}
                   className="bg-transparent"
                 >
-                  <Text className="text-blue font-vollkorn-medium">Xem tất cả</Text>
+                  <Text className="text-blue font-vollkorn-medium ml-16">Xem tất cả</Text>
                 </TouchableOpacity>
               </View>
-              <View className="h-2 w-32 ml-14 bg-blue rounded-full mt-1" />
-              
+              <View className="h-2 w-32 ml-28 items-center bg-blue rounded-full mt-1" />
+              <View className="ml-5">
               <FlatList
                 data={tours}
                 renderItem={renderTourCard}
                 keyExtractor={(item) => item._id.toString()}
                 horizontal={true}
-                showsHorizontalScrollIndicator={false}
-              />
+                  showsHorizontalScrollIndicator={false}
+                />
+              </View>
             </View>
 
             <View className="mt-5">
@@ -91,8 +98,16 @@ const Home = () => {
                       <Text className="text-2xl font-vollkorn-bold text-center">
                         Khách hàng nói gì về Hodophile
                       </Text>
+                      
                       <View className="h-2 w-32 ml-14 bg-blue rounded-full" />
                     </View>
+                    <FlatList
+                      data={mockFeedback}
+                      renderItem={renderFeedbackCard}
+                      keyExtractor={(item) => item.statement}
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                    />
                   </View>
                 </ImageBackground>
               </View>
