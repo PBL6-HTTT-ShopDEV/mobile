@@ -8,6 +8,8 @@ import CustomInput from '../../components/CustomInput';
 import { router } from 'expo-router';
 import { authService } from '../../services/authService';
 import { Alert } from 'react-native';
+import { format, parse, isValid } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -35,15 +37,50 @@ const SignUp = () => {
     }
   }, [password, confirmPassword]);
 
-  const validateDateOfBirth = (date: string) => {
-    const birthDate = new Date(date);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    
-    if (age < 18 || age > 100) {
-      return 'Tuổi phải từ 18 đến 100';
+  const formatDateString = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
+      if (!isValid(parsedDate)) return '';
+      
+      return format(parsedDate, 'yyyy-MM-dd');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
     }
-    return '';
+  };
+
+  const validateDateOfBirth = (dateString: string) => {
+    if (!dateString) return '';
+    
+    try {
+      const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
+      if (!isValid(parsedDate)) {
+        return 'Ngày sinh không hợp lệ (DD/MM/YYYY)';
+      }
+
+      const today = new Date();
+      let age = today.getFullYear() - parsedDate.getFullYear();
+      
+      const birthMonth = parsedDate.getMonth();
+      const currentMonth = today.getMonth();
+      
+      if (currentMonth < birthMonth || 
+          (currentMonth === birthMonth && today.getDate() < parsedDate.getDate())) {
+        age--;
+      }
+      
+      if (age < 18) {
+        return 'Bạn phải đủ 18 tuổi trở lên';
+      }
+      if (age > 100) {
+        return 'Ngày sinh không hợp lệ';
+      }
+      
+      return '';
+    } catch (error) {
+      return 'Ngày sinh không hợp lệ (DD/MM/YYYY)';
+    }
   };
 
   const validateForm = () => {
@@ -57,14 +94,15 @@ const SignUp = () => {
       return false;
     }
 
-    const dateError = validateDateOfBirth(dateOfBirth);
-    if (dateError) {
-      Alert.alert('Lỗi', dateError);
-      return false;
+    if (dateOfBirth) {
+      const dateError = validateDateOfBirth(dateOfBirth);
+      if (dateError) {
+        Alert.alert('Lỗi', dateError);
+        return false;
+      }
     }
 
-    // Validate phone number format
-    if (phoneNumber && !/^[0-9]{10}$/.test(phoneNumber)) {
+    if (phoneNumber && !/^\d{10}$/.test(phoneNumber)) {
       Alert.alert('Lỗi', 'Số điện thoại không hợp lệ');
       return false;
     }
@@ -101,7 +139,7 @@ const SignUp = () => {
           name: fullName,
           phone_number: phoneNumber,
           address,
-          date_of_birth: dateOfBirth
+          date_of_birth: dateOfBirth ? formatDateString(dateOfBirth) : undefined
         };
         
         console.log('Cập nhật profile với dữ liệu:', updateData);
@@ -201,7 +239,7 @@ const SignUp = () => {
             inputClassName="h-full"
           />
           <CustomInput
-            placeholder="Ngày sinh (YYYY-MM-DD)"
+            placeholder="Ngày sinh (DD/MM/YYYY)"
             value={dateOfBirth}
             onChangeText={setDateOfBirth}
             containerClassName="h-12"

@@ -11,7 +11,8 @@ npm-debug.*
 web-build/
 .env*.local
 package-lock.json
-package.json.env
+package.json
+tsconfig.json
 # macOS
 .DS_Store
 

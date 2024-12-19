@@ -6,12 +6,16 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import ModalInput from '../../components/ModalInput';
 import { useAuth } from '../../hooks/AuthContext';
 import { router } from 'expo-router';
+import { format, isValid, parse } from 'date-fns';
+import { vi } from 'date-fns/locale';
+import { UpdateProfilePayload } from '../../types/User.types';
 
 const Profile = () => {
   const { user, logout, updateProfile } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   
   // Debug logs
   console.log('Profile Render - Current user:', user);
@@ -42,7 +46,7 @@ const Profile = () => {
         email: user.email || '',
         phone_number: user.phone_number || '',
         address: user.address || '',
-        date_of_birth: user.date_of_birth || ''
+        date_of_birth: user.date_of_birth ? formatDateForDisplay(user.date_of_birth) : ''
       });
       console.log('Updated form data from user:', user);
     }
@@ -59,21 +63,117 @@ const Profile = () => {
     setIsModalVisible(false);
   };
 
-  const handleUpdateProfile = async () => {
-    console.log('Attempting to update profile with data:', formData);
+  const formatDateString = (dateString: string) => {
+    if (!dateString) return '';
     try {
-      await updateProfile({
-        name: formData.name,
-        phone_number: formData.phone_number,
-        address: formData.address,
-        date_of_birth: formData.date_of_birth
+      // Xử lý cả trường hợp ISO string và định dạng YYYY-MM-DD
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      
+      // Format: DD/MM/YYYY
+      return format(date, 'dd/MM/yyyy', { locale: vi });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
+    }
+  };
+
+  const formatDateForAPI = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      // Parse ngày từ định dạng DD/MM/YYYY
+      const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
+      // Chuyển sang định dạng YYYY-MM-DD
+      return format(parsedDate, 'yyyy-MM-dd');
+    } catch (error) {
+      console.error('Error formatting date for API:', error);
+      return '';
+    }
+  };
+
+  const formatDateForDisplay = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      // Thử parse từ ISO string hoặc YYYY-MM-DD
+      const date = new Date(dateString);
+      if (!isValid(date)) return '';
+      
+      // Format sang DD/MM/YYYY
+      return format(date, 'dd/MM/yyyy', { locale: vi });
+    } catch (error) {
+      console.error('Error formatting date for display:', error);
+      return '';
+    }
+  };
+
+  const resetFormData = () => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone_number: user.phone_number || '',
+        address: user.address || '',
+        date_of_birth: user.date_of_birth ? formatDateForDisplay(user.date_of_birth) : ''
       });
-      console.log('Profile update successful');
-      Alert.alert('Thành công', 'Cập nhật thông tin thành công');
-      closeModal();
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    if (isUpdating) return;
+    
+    setIsUpdating(true);
+    try {
+      // Validate dữ liệu
+      if (!formData.name?.trim()) {
+        Alert.alert('Lỗi', 'Vui lòng nhập họ tên');
+        return;
+      }
+
+      if (formData.phone_number && !/^\d{10}$/.test(formData.phone_number)) {
+        Alert.alert('Lỗi', 'Số điện thoại không hợp lệ');
+        return;
+      }
+
+      if (formData.date_of_birth) {
+        try {
+          // Kiểm tra định dạng ngày hợp lệ
+          const parsedDate = parse(formData.date_of_birth, 'dd/MM/yyyy', new Date());
+          if (isNaN(parsedDate.getTime())) {
+            Alert.alert('Lỗi', 'Ngày sinh không hợp lệ (DD/MM/YYYY)');
+            return;
+          }
+        } catch (error) {
+          Alert.alert('Lỗi', 'Ngày sinh không hợp lệ (DD/MM/YYYY)');
+          return;
+        }
+      }
+
+      // Chỉ gửi những trường đã được cập nhật
+      const updatedFields: UpdateProfilePayload = {};
+      
+      if (formData.name !== user?.name) updatedFields.name = formData.name;
+      if (formData.phone_number !== user?.phone_number) updatedFields.phone_number = formData.phone_number;
+      if (formData.address !== user?.address) updatedFields.address = formData.address;
+      
+      // So sánh ngày tháng sau khi đã format
+      const currentDate = user?.date_of_birth ? formatDateForDisplay(user.date_of_birth) : '';
+      if (formData.date_of_birth && formData.date_of_birth !== currentDate) {
+        updatedFields.date_of_birth = formatDateForAPI(formData.date_of_birth);
+      }
+
+      // Chỉ gọi API nếu có thay đổi
+      if (Object.keys(updatedFields).length > 0) {
+        await updateProfile(updatedFields);
+        Alert.alert('Thành công', 'Cập nhật thông tin thành công');
+        closeModal();
+      } else {
+        Alert.alert('Thông báo', 'Không có thông tin nào được thay đổi');
+      }
     } catch (error) {
       console.error('Profile update failed:', error);
-      Alert.alert('Lỗi', 'Không thể cập nhật thông tin');
+      Alert.alert('Lỗi', 'Không thể cập nhật thông tin. Vui lòng thử lại');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -113,6 +213,51 @@ const Profile = () => {
     }
   };
 
+  const renderProfileSection = () => (
+    <View className="bg-white rounded-lg p-4 mt-4">
+      <Text className="text-xl font-vollkorn-bold mb-4">Thông tin cá nhân</Text>
+      
+      <View className="space-y-3">
+        <View className="flex-row justify-between items-center">
+          <Text className="text-gray-600">Họ tên:</Text>
+          <Text className="font-vollkorn-regular">{user?.name || 'Chưa cập nhật'}</Text>
+        </View>
+        
+        <View className="flex-row justify-between items-center">
+          <Text className="text-gray-600">Email:</Text>
+          <Text className="font-vollkorn-regular">{user?.email}</Text>
+        </View>
+        
+        <View className="flex-row justify-between items-center">
+          <Text className="text-gray-600">Số điện thoại:</Text>
+          <Text className="font-vollkorn-regular">{user?.phone_number || 'Chưa cập nhật'}</Text>
+        </View>
+        
+        <View className="flex-row justify-between items-center">
+          <Text className="text-gray-600">Địa chỉ:</Text>
+          <Text className="font-vollkorn-regular">{user?.address || 'Chưa cập nhật'}</Text>
+        </View>
+        
+        <View className="flex-row justify-between items-center">
+          <Text className="text-gray-600">Ngày sinh:</Text>
+          <Text className="font-vollkorn-regular">
+            {user?.date_of_birth ? formatDateForDisplay(user.date_of_birth) : 'Chưa cập nhật'}
+          </Text>
+        </View>
+      </View>
+
+      <TouchableOpacity 
+        className="bg-blue-500 p-3 rounded-lg mt-4"
+        onPress={() => setModalContent('personalInfo')}
+        disabled={isUpdating}
+      >
+        <Text className="text-white text-center font-vollkorn-bold">
+          Cập nhật thông tin
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <View className="flex-1 bg-white p-5">
       <Text className='text-center font-vollkorn-bold text-3xl text-blue mt-1'>
@@ -150,10 +295,18 @@ const Profile = () => {
           </TouchableOpacity>
           
           {modalContent === 'personalInfo' && (
-            <View>
-              <Text className="text-2xl font-vollkorn-bold text-blue text-center mt-3">
+            <View className="bg-white p-5 rounded-2xl">
+              <TouchableOpacity 
+                className='absolute top-2 right-2 z-10 p-2' 
+                onPress={closeModal}
+              >
+                <Ionicons name="close-outline" size={24} color="black" />
+              </TouchableOpacity>
+              
+              <Text className="text-2xl font-vollkorn-bold text-blue text-center mb-4">
                 Thông tin cá nhân
               </Text>
+              
               <View>
                 <ModalInput 
                   label="Họ và tên"
@@ -200,7 +353,7 @@ const Profile = () => {
                   onPress={handleUpdateProfile}
                   className="bg-blue-500 p-3 rounded-lg mt-4"
                 >
-                  <Text className="text-white text-center font-bold">Lưu thay đổi</Text>
+                  <Text className="text-black text-2xl text-center font-vollkorn-bold">Lưu thay đổi</Text>
                 </TouchableOpacity>
               </View>
             </View>
