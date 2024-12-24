@@ -9,19 +9,13 @@ export interface ITour {
   description: string;
   thumbnail_url: string;
   images: string[];
-  schedule: {
-    title: string;
-    description: string;
-    activities: string[];
-  }[];
-  status: 'ACTIVE' | 'INACTIVE' | 'DELETED';
+  status: 'active' | 'inactive';
   max_group_size: number;
-  current_group_size: number;
-  category_id: string;
   created_at: string;
   updated_at: string;
   created_by: string;
   updated_by: string;
+  schedule?: any[];
 }
 
 export interface ITourFilters {

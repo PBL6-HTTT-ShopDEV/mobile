@@ -10,8 +10,15 @@ import { handleVNPayPayment } from '../../../utilities/vnpayUtils';
 import { Alert, Platform } from 'react-native';
 import * as Linking from 'expo-linking';
 import { validateVNPayResponse } from '../../../utilities/vnpayUtils';
+import { useAuth } from '../../../hooks/AuthContext';
+import bookingService from '../../../services/bookingService';
+import { tourService } from '../../../services/tourService';
+import { ITour } from '../../../types/Tour.types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Booking: React.FC = () => {
   const { id } = useLocalSearchParams();
+  const { user, isAuthenticated, refreshUserData } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const [adultCount, setAdultCount] = useState(0);
   const [childCount, setChildCount] = useState(0);
@@ -21,21 +28,144 @@ const Booking: React.FC = () => {
     address: '',
     email: '',
   });
-  const handlePayment = () => {
+  const [loading, setLoading] = useState(false);
+  const [tourData, setTourData] = useState<ITour | null>(null);
+
+  // Debug useAuth
+  useEffect(() => {
+    const checkAuthState = async () => {
+      console.log('Current user:', user);
+      console.log('Is authenticated:', isAuthenticated);
+      
+      // Kiểm tra AsyncStorage
+      const storedUser = await AsyncStorage.getItem('user');
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('Stored user in AsyncStorage:', storedUser);
+      console.log('Stored token in AsyncStorage:', token ? 'exists' : 'not found');
+
+      if (!user && storedUser && token) {
+        console.log('User data exists in storage but not in context, refreshing...');
+        await refreshUserData();
+      }
+    };
+
+    checkAuthState();
+  }, [user, isAuthenticated]);
+
+  // Fetch tour data khi component mount
+  useEffect(() => {
+    const fetchTourData = async () => {
+      if (id) {
+        const response = await tourService.getTourById(id as string);
+        if (response.status === 'success' && response.data) {
+          // Đảm bảo data có đầy đủ các trường bắt buộc
+          const tour = response.data;
+          if (
+            tour._id &&
+            tour.name &&
+            typeof tour.price === 'number' &&
+            tour.destination &&
+            tour.departure_location &&
+            tour.start_date &&
+            tour.end_date
+          ) {
+            setTourData(tour as ITour); // Type assertion sau khi đã kiểm tra
+          } else {
+            Alert.alert('Lỗi', 'Dữ liệu tour không đầy đủ');
+          }
+        }
+      }
+    };
+    fetchTourData();
+  }, [id]);
+
+  const handlePayment = async () => {
+    console.log('handlePayment called');
+    console.log('Current user state:', user);
+    console.log('Current auth state:', isAuthenticated);
+
+    if (!user) {
+      console.log('No user found, checking storage...');
+      const storedUser = await AsyncStorage.getItem('user');
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('Stored user:', storedUser);
+      console.log('Token exists:', !!token);
+
+      if (storedUser && token) {
+        console.log('Found stored user data, attempting refresh...');
+        await refreshUserData();
+        if (!user) {
+          console.log('Still no user after refresh');
+          Alert.alert('Thông báo', 'Vui lòng đăng nhập lại để đặt tour');
+          return;
+        }
+      } else {
+        Alert.alert('Thông báo', 'Vui lòng đăng nhập để đặt tour');
+        return;
+      }
+    }
+
+    if (!tourData) {
+      console.log('No tour data found');
+      Alert.alert('Thông báo', 'Không tìm thấy thông tin tour');
+      return;
+    }
+
     // Validate form
+    console.log('Form data:', formData);
     if (!formData.fullName || !formData.phone || !formData.address || !formData.email) {
+      console.log('Missing form fields:', {
+        fullName: !formData.fullName,
+        phone: !formData.phone,
+        address: !formData.address,
+        email: !formData.email
+      });
       Alert.alert('Thông báo', 'Vui lòng điền đầy đủ thông tin');
       return;
     }
 
-    // Tính tổng tiền
-    const totalAmount = (adultCount * 1000000) + (childCount * 500000);
+    // Validate số lượng người
+    console.log('People count:', { adults: adultCount, children: childCount });
+    if (adultCount + childCount <= 0) {
+      console.log('No people selected');
+      Alert.alert('Thông báo', 'Vui lòng chọn số lượng người tham gia');
+      return;
+    }
 
-    // Gọi hàm thanh toán VNPay với các options
-    handleVNPayPayment({
-      amount: totalAmount,
-   
-    });
+    setLoading(true);
+    try {
+      // Tạo booking
+      const bookingData = {
+        tour: id as string,
+        number_of_people: adultCount + childCount,
+        total_price: (adultCount * tourData.price) + (childCount * tourData.price * 0.5),
+        status: 'pending' as const,
+        user_info: formData
+      };
+      console.log('Creating booking with data:', bookingData);
+
+      const bookingResponse = await bookingService.createBooking(bookingData);
+      console.log('Booking response:', bookingResponse);
+
+      if (bookingResponse.status === 'success' && bookingResponse.data) {
+        console.log('Booking created successfully, proceeding to payment');
+        handleVNPayPayment({
+          amount: bookingData.total_price,
+         
+        });
+      } else {
+        console.log('Booking creation failed:', bookingResponse.message);
+        Alert.alert('Thông báo', bookingResponse.message || 'Không thể tạo booking');
+      }
+    } catch (error) {
+      console.error('Error during booking creation:', error);
+      Alert.alert(
+        'Lỗi',
+        error instanceof Error ? error.message : 'Đã có lỗi xảy ra khi tạo booking'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
   const renderAdults = () => {
     return Array.from({ length: adultCount }, (_, index) => (
