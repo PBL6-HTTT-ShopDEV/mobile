@@ -64,22 +64,34 @@ class BookingService {
   // Lấy danh sách booking của user
   async getBookingsByUserId(): Promise<IApiResponse<IBooking[]>> {
     try {
-      const userId = await AsyncStorage.getItem('userId');
-      if (!userId) {
+      const userStr = await AsyncStorage.getItem('user');
+      const token = await AsyncStorage.getItem('accessToken');
+      
+      if (!userStr || !token) {
         return {
           status: 'error',
           message: 'Vui lòng đăng nhập'
         };
       }
 
-      const response = await fetch(`${this.baseURL}/user`, {
+      const user = JSON.parse(userStr);
+      const userId = user._id;
+
+      console.log('Fetching bookings with userId:', userId);
+
+      // Sửa lại endpoint theo route trong backend
+      const response = await fetch(`${this.baseURL}/user/me`, {
+        method: 'GET',
         headers: {
+          'Content-Type': 'application/json',
           'x-api-key': API_CONFIG.HEADERS['x-api-key'],
-          'x-client-id': userId
+          'x-client-id': userId,
+          'Authorization': `Bearer ${token}`
         }
       });
 
       const data = await response.json();
+      console.log('Get bookings API response:', data);
 
       if (!response.ok) {
         return {
@@ -95,6 +107,7 @@ class BookingService {
       };
 
     } catch (error) {
+      console.error('Get bookings error:', error);
       return {
         status: 'error',
         message: error instanceof Error ? error.message : 'Đã có lỗi xảy ra'
