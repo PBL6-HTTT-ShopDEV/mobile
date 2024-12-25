@@ -31,11 +31,17 @@ const Home = () => {
   }, []);
 
   const renderFeedbackCard = ({ item }: { item: IFeedback }) => (
-    <FeedbackCard {...item} />
+    <FeedbackCard 
+      key={item.statement}
+      {...item} 
+    />
   );
 
   const renderTourCard = ({ item }: { item: ITour }) => (
-    <TourCard {...item} />
+    <TourCard 
+      key={item._id}
+      {...item} 
+    />
   );
 
   return (
@@ -74,12 +80,12 @@ const Home = () => {
                   <Text className="text-blue font-vollkorn-medium ml-16">Xem tất cả</Text>
                 </TouchableOpacity>
               </View>
-              <View className="h-2 w-32 ml-28 items-center bg-blue rounded-full mt-1" />
+              <View className="h-2 w-32 ml-28 items-center bg-blue rounded-full my-1" />
               <View className="ml-5">
               <FlatList
                 data={tours}
                 renderItem={renderTourCard}
-                keyExtractor={(item) => item._id.toString()}
+                keyExtractor={(item) => item._id}
                 horizontal={true}
                   showsHorizontalScrollIndicator={false}
                 />

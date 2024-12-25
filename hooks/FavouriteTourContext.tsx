@@ -1,31 +1,54 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ITour } from '../types/Tour.types';
+import { useAuth } from './AuthContext';
 
 interface FavoriteTourContextProps {
   favoriteTours: ITour[];
   toggleFavoriteTour: (tour: ITour) => void;
 }
 
-// Tạo context
 const FavoriteTourContext = createContext<FavoriteTourContextProps | undefined>(undefined);
 
 export const FavoriteTourProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [favoriteTours, setFavoriteTours] = useState<ITour[]>([]);
+  const { user } = useAuth();
 
-  const toggleFavoriteTour = (tour: ITour) => {
-    setFavoriteTours((prevTours) => {
-      const isFavorited = prevTours.some((t) => t.tour_id === tour.tour_id); // Kiểm tra xem tour đã tồn tại chưa
-      if (isFavorited) {
-        // Nếu tour đã được yêu thích, xóa khỏi danh sách
-        console.log('Tour được thao tác:', tour.tour_id);
-        return prevTours.filter((t) => t.tour_id !== tour.tour_id);
-        
-      } else {
-        // Nếu chưa, thêm tour vào danh sách yêu thích
-        console.log('Adding tour:', tour.tour_id);
-        return [...prevTours, tour];
+  useEffect(() => {
+    if (user?._id) {
+      loadFavoriteTours(user._id);
+    } else {
+      setFavoriteTours([]);
+    }
+  }, [user]);
+
+  const loadFavoriteTours = async (userId: string) => {
+    try {
+      const savedTours = await AsyncStorage.getItem(`favoriteTours_${userId}`);
+      if (savedTours) {
+        setFavoriteTours(JSON.parse(savedTours));
       }
-    });
+    } catch (error) {
+      console.error('Error loading favorite tours:', error);
+    }
+  };
+
+  const toggleFavoriteTour = async (tour: ITour) => {
+    if (!user?._id) {
+      console.error('No user logged in');
+      return;
+    }
+
+    try {
+      const newFavoriteTours = favoriteTours.some((t) => t._id === tour._id)
+        ? favoriteTours.filter((t) => t._id !== tour._id)
+        : [...favoriteTours, tour];
+
+      setFavoriteTours(newFavoriteTours);
+      await AsyncStorage.setItem(`favoriteTours_${user._id}`, JSON.stringify(newFavoriteTours));
+    } catch (error) {
+      console.error('Error saving favorite tour:', error);
+    }
   };
 
   return (
