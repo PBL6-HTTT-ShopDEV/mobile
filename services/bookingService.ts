@@ -167,7 +167,7 @@ class BookingService {
         };
       }
 
-      const response = await fetch(`${this.baseURL}/${id}`, {
+      const response = await fetch(`${this.baseURL}?id=${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

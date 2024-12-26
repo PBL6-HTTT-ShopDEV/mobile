@@ -3,6 +3,7 @@ import { WebView } from 'react-native-webview'
 import { View, ActivityIndicator, Alert } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { validatePaymentReturn } from '../../utilities/vnpayUtils'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const VNPayScreen = () => {
   const params = useLocalSearchParams()
@@ -15,16 +16,21 @@ const VNPayScreen = () => {
     }
   }, [paymentUrl])
 
-  const handleNavigationStateChange = (navState: { url: string }) => {
+  const handleNavigationStateChange = async (navState: { url: string }) => {
     if (navState.url.includes('vnp_ResponseCode')) {
       try {
         const urlObj = new URL(navState.url)
         const searchParams = new URLSearchParams(urlObj.search)
         const params = Object.fromEntries(searchParams.entries())
         
+        const bookingId = await AsyncStorage.getItem('current_booking_id')
+        
         router.replace({
           pathname: '/(payment)/payment-return',
-          params: params
+          params: {
+            ...params,
+            bookingId: bookingId
+          }
         })
       } catch (error) {
         console.error('Error processing payment response:', error)

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, Alert } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import Button from '../../components/Button'
+import BookingService from '../../services/bookingService'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 interface VNPayResponse {
   vnp_ResponseCode: string
@@ -9,6 +11,7 @@ interface VNPayResponse {
   vnp_Amount: string
   vnp_BankCode: string
   vnp_PayDate: string
+  vnp_OrderInfo: string // Chứa booking ID
   [key: string]: string
 }
 
@@ -21,16 +24,63 @@ export default function PaymentReturn() {
     handlePaymentResult()
   }, [params])
 
-  const handlePaymentResult = () => {
+  const handlePaymentResult = async () => {
     try {
+      const bookingId = params.bookingId
+      if (!bookingId) {
+        throw new Error('Không tìm thấy thông tin đơn hàng')
+      }
+      console.log('BookingID received:', bookingId)
+
+      // Lấy userId từ AsyncStorage và kiểm tra
+      const userId = await AsyncStorage.getItem('userId')
+      if (!userId) {
+        console.log('No userId found in AsyncStorage')
+        setStatus('failed')
+        setMessage('Vui lòng đăng nhập lại để hoàn tất thanh toán')
+        return // Dừng xử lý nếu không có userId
+      }
+      console.log('UserID from storage:', userId)
+
+      // Tiếp tục xử lý khi đã có userId
+      const bookingResponse = await BookingService.getBookingById(bookingId)
+      console.log('Booking Response:', bookingResponse)
+
+      if (!bookingResponse.data) {
+        console.log('Booking data is null:', bookingResponse)
+        throw new Error('Không thể lấy thông tin booking')
+      }
+
       if (params.vnp_ResponseCode === '00' && params.vnp_TransactionStatus === '00') {
-        setStatus('success')
-        setMessage('Thanh toán thành công!')
+        const updateResponse = await BookingService.updateBooking(bookingId, {
+          status: 'success',
+          number_of_people: bookingResponse.data.number_of_people,
+          total_price: parseInt(params.vnp_Amount)/100
+        })
+
+        console.log('Update Response:', updateResponse)
+
+        if (updateResponse.status === 'success') {
+          setStatus('success')
+          setMessage('Thanh toán thành công!')
+        } else {
+          setStatus('failed')
+          setMessage('Thanh toán thành công nhưng cập nhật booking thất bại')
+        }
       } else {
+        await BookingService.updateBooking(bookingId, {
+          status: 'failed',
+          number_of_people: bookingResponse.data.number_of_people,
+          total_price: bookingResponse.data.total_price
+        })
         setStatus('failed')
         setMessage(getErrorMessage(params.vnp_ResponseCode))
       }
     } catch (error) {
+      console.error('Payment return error details:', {
+        params: params,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      })
       setStatus('failed')
       setMessage('Có lỗi xảy ra trong quá trình xử lý')
     }

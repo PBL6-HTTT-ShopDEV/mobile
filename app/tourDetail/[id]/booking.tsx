@@ -149,9 +149,13 @@ const Booking: React.FC = () => {
 
       if (bookingResponse.status === 'success' && bookingResponse.data) {
         console.log('Booking created successfully, proceeding to payment');
+        
+        // Lưu cả booking ID và user ID
+        await AsyncStorage.setItem('current_booking_id', bookingResponse.data._id);
+        await AsyncStorage.setItem('userId', user._id); // Lưu user ID
+        
         handleVNPayPayment({
-          amount: bookingData.total_price,
-         
+          amount: bookingData.total_price
         });
       } else {
         console.log('Booking creation failed:', bookingResponse.message);
