@@ -3,6 +3,12 @@ import { IApiResponse } from '../types/apiResponse';
 import { IBooking } from '../types/Booking.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+interface PendingPayment {
+  bookingId: string;
+  paymentUrl: string;
+  expiredAt: string;
+}
+
 class BookingService {
   private baseURL = `${API_CONFIG.BASE_URL}/bookings`;
 
@@ -274,6 +280,45 @@ class BookingService {
         status: 'error',
         message: error instanceof Error ? error.message : 'Đã có lỗi xảy ra'
       };
+    }
+  }
+
+  async savePendingPayment(bookingId: string, paymentUrl: string) {
+    try {
+      const expiredAt = new Date(Date.now() + 15 * 60 * 1000); // 15 phút
+      const pendingPayment: PendingPayment = {
+        bookingId,
+        paymentUrl,
+        expiredAt: expiredAt.toISOString()
+      };
+      
+      await AsyncStorage.setItem(`pending_payment_${bookingId}`, JSON.stringify(pendingPayment));
+      console.log('Saved pending payment:', pendingPayment); // Debug log
+    } catch (error) {
+      console.error('Error saving pending payment:', error);
+    }
+  }
+
+  async getPendingPayment(bookingId: string): Promise<PendingPayment | null> {
+    try {
+      const data = await AsyncStorage.getItem(`pending_payment_${bookingId}`);
+      console.log('Retrieved pending payment data:', data); // Debug log
+      
+      if (!data) return null;
+
+      const payment = JSON.parse(data) as PendingPayment;
+      
+      // Kiểm tra hết hạn
+      if (new Date(payment.expiredAt) < new Date()) {
+        console.log('Payment URL expired'); // Debug log
+        await AsyncStorage.removeItem(`pending_payment_${bookingId}`);
+        return null;
+      }
+
+      return payment;
+    } catch (error) {
+      console.error('Error getting pending payment:', error);
+      return null;
     }
   }
 }

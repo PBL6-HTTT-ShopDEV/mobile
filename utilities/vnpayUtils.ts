@@ -7,6 +7,8 @@ import * as Network from 'expo-network'
 import { router } from 'expo-router'
 import querystring from 'qs'
 import { Platform } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import bookingService from '../services/bookingService'
 
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
@@ -80,6 +82,11 @@ const handleVNPayPayment = async ({ amount, orderType = 'other' }: IPaymentParam
     const secureHash = CryptoJS.HmacSHA512(queryString, VNP_PARAMS.secretKey).toString(CryptoJS.enc.Hex)
 
     const paymentUrl = `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?${queryString}&vnp_SecureHash=${secureHash}`
+
+    const bookingId = await AsyncStorage.getItem('current_booking_id');
+    if (bookingId) {
+      await bookingService.savePendingPayment(bookingId, paymentUrl);
+    }
 
     console.log('=== Payment Request ===')
     console.log(JSON.stringify({ amount, orderType }, null, 2))

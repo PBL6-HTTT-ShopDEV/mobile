@@ -9,6 +9,8 @@ export interface IBooking {
   status: BookingStatus;
   total_price: number;
   number_of_people: number;
+  payment_url?: string;
+  payment_expired_at?: Date | string;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   user_info?: {
