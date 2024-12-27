@@ -18,16 +18,17 @@ import { ITour } from '../../types/Tour.types'
 import { mockFeedback } from '../../data/mockFeedback'
 import FeedbackCard from '../../components/FeedbackCard'
 import { IFeedback } from '../../types/Feedback.type'
+import SearchBar from '../../components/SearchBar'
 const HEADER_MAX_HEIGHT = 256;
 const HEADER_MIN_HEIGHT = 80;
 
 const Home = () => {
-  const { tours, loading, getTours } = useTour();
+  const { tours, loading, error, getTours, searchTours } = useTour();
   const insets = useSafeAreaInsets();
   const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    getTours(6);
+    getTours();
   }, []);
 
   const renderFeedbackCard = ({ item }: { item: IFeedback }) => (
@@ -55,6 +56,12 @@ const Home = () => {
       ) : (
         <>
           <Header animatedValue={scrollY} />
+          <SearchBar 
+            initialValue=""
+            onSearch={async (term) => {
+              await searchTours(term);
+            }}
+          />
           <Animated.ScrollView
             className="flex-1 mt-12"
             scrollEventThrottle={16}

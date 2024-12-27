@@ -79,6 +79,24 @@ export const useTour = () => {
     setError(null);
   };
 
+  const searchTours = async (searchTerm: string) => {
+    setLoading(true);
+    try {
+      const response = await tourService.searchTours(searchTerm);
+      
+      if (response.status === 'success' && response.data) {
+        setTours(response.data);
+        setError(null);
+      } else {
+        setError(response.message || 'Không thể tìm kiếm tour');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Đã có lỗi xảy ra');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     tours,
     loading,
@@ -86,6 +104,7 @@ export const useTour = () => {
     hasMore,
     getTours,
     getAllTours,
-    resetTours
+    resetTours,
+    searchTours
   };
 }; 

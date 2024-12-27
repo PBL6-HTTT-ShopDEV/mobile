@@ -52,6 +52,13 @@ const Profile = () => {
     }
   }, [user]);
 
+  // Thêm state cho form đổi mật khẩu
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
   const openModal = (content: string) => {
     console.log('Opening modal with content:', content);
     setModalContent(content);
@@ -360,9 +367,60 @@ const Profile = () => {
           )}
           
           {modalContent === 'changePassword' && (
-            <Text className="text-2xl font-vollkorn-bold text-blue text-center mt-3">
-              Đổi mật khẩu
-            </Text>
+            <View className="bg-white p-5 rounded-2xl">
+              <TouchableOpacity 
+                className='absolute top-2 right-2 z-10 p-2' 
+                onPress={closeModal}
+              >
+                <Ionicons name="close-outline" size={24} color="black" />
+              </TouchableOpacity>
+              
+              <Text className="text-2xl font-vollkorn-bold text-blue text-center mb-4">
+                Đổi mật khẩu
+              </Text>
+              
+              <View>
+                <ModalInput 
+                  label="Mật khẩu hiện tại"
+                  placeholder="Nhập mật khẩu hiện tại"
+                  isRequired={true}
+                  onEdit={() => {}}
+                  initialValue={passwordForm.currentPassword}
+                  onChangeText={(text) => setPasswordForm(prev => ({...prev, currentPassword: text}))}
+                  secureTextEntry={true}
+                />
+                <ModalInput 
+                  label="Mật khẩu mới"
+                  placeholder="Nhập mật khẩu mới"
+                  isRequired={true}
+                  onEdit={() => {}}
+                  initialValue={passwordForm.newPassword}
+                  onChangeText={(text) => setPasswordForm(prev => ({...prev, newPassword: text}))}
+                  secureTextEntry={true}
+                />
+                <ModalInput 
+                  label="Xác nhận mật khẩu"
+                  placeholder="Nhập lại mật khẩu mới"
+                  isRequired={true}
+                  onEdit={() => {}}
+                  initialValue={passwordForm.confirmPassword}
+                  onChangeText={(text) => setPasswordForm(prev => ({...prev, confirmPassword: text}))}
+                  secureTextEntry={true}
+                />
+                
+                <TouchableOpacity 
+                  className="bg-blue-500 p-3 rounded-lg mt-4"
+                  onPress={() => {
+                    // Xử lý logic đổi mật khẩu ở đây
+                    Alert.alert('Thông báo', 'Chức năng đang được phát triển');
+                  }}
+                >
+                  <Text className="text-white text-center font-vollkorn-bold">
+                    Cập nhật mật khẩu
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           )}
           
           {modalContent === 'deleteAccount' && (

@@ -10,6 +10,7 @@ interface CustomInputProps {
   initialValue?: string;
   onChangeText?: (text: string) => void;
   editable?: boolean;
+  secureTextEntry?: boolean;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({ 
@@ -19,7 +20,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
   onEdit,
   initialValue = '',
   onChangeText,
-  editable = true
+  editable = true,
+  secureTextEntry = false
 }) => {
   const [value, setValue] = useState(initialValue);
 
@@ -50,6 +52,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             placeholder={placeholder}
             placeholderTextColor="#999"
             editable={editable}
+            secureTextEntry={secureTextEntry}
           />
           {editable && (
             <TouchableOpacity 

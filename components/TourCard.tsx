@@ -58,8 +58,11 @@ const TourCard: React.FC<ITour> = (props) => {
     <StyledView className="bg-white rounded-xl shadow-sm mb-4 mx-2">
       <StyledView className="relative">
         <StyledImage
-          source={{ uri: imageUrl }}
-          className="w-full h-48 rounded-t-xl"
+          source={{ 
+            uri: thumbnail_url || 'https://placeholder-image.jpg'
+          }}
+          className="w-full h-48 rounded-t-lg"
+          resizeMode="cover"
         />
         <StyledTouchableOpacity
           className="absolute top-2 right-2"

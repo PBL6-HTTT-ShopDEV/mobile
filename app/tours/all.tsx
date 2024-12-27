@@ -7,7 +7,7 @@ import FilterModal from '../../components/FilterModal';
 import { ITourFilters } from '../../types/Tour.types';
 
 const AllToursScreen = () => {
-  const { tours, loading, error, getAllTours, resetTours } = useTour();
+  const { tours, loading, error, getAllTours, resetTours, searchTours } = useTour();
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState<ITourFilters>({
     destination: '',
@@ -28,7 +28,12 @@ const AllToursScreen = () => {
   return (
     <View className="flex-1 bg-white">
       <View className="p-4">
-        <SearchBar />
+        <SearchBar 
+          initialValue=""
+          onSearch={async (term) => {
+            await searchTours(term);
+          }}
+        />
         <TouchableOpacity 
           className="mt-2 p-2 bg-blue rounded-md"
           onPress={() => setShowFilter(true)}

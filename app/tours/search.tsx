@@ -1,90 +1,51 @@
-// import React, { useState, useEffect } from 'react';
-// import { View, FlatList, ActivityIndicator,Text } from 'react-native';
-// import { useRouter, useLocalSearchParams } from 'expo-router';
-// import { ITour } from '../../types/Tour.types';
-// import { getTours } from '../../models/tours';
-// import TourCard from '../../components/TourCard';
-// import SearchBar from '../../components/SearchBar';
+import React, { useEffect } from 'react';
+import { View, ActivityIndicator, Text } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { useTour } from '../../hooks/useTour';
+import SearchBar from '../../components/SearchBar';
+import TourCard from '../../components/TourCard';
+import { FlatList } from 'react-native-gesture-handler';
 
-// const SearchPage = () => {
-//   const [tours, setTours] = useState<ITour[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const { q } = useLocalSearchParams();
-//   const router = useRouter();
-//   console.log("Query Param q:", q);
+export default function Search() {
+  const { q } = useLocalSearchParams();
+  const { tours, loading, error, searchTours } = useTour();
 
-//   useEffect(() => {
-//     let isMounted = true;
+  useEffect(() => {
+    if (q) {
+      searchTours(q as string);
+    }
+  }, [q]);
 
-//     const searchTours = async () => {
-//       try {
-//         const response = await getTours('1', { destination: q as string }, '16');
-//         console.log('API response:', response);
-//         if (isMounted && response && response.data) {
-//           const filteredTours = response.data.filter((tour): tour is ITour => tour !== undefined);
-//           setTours(filteredTours);
-//         }
-//       } catch (error) {
-//         console.error('Error fetching tours:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
+  return (
+    <View className="flex-1 bg-white">
+      <View className="p-4">
+        <SearchBar 
+          initialValue={q as string}
+          onSearch={(term) => searchTours(term)}
+        />
+      </View>
 
-//     if (q) {
-//       searchTours();
-//     }
-
-//     return () => {
-//       isMounted = false;
-//     };
-//   }, [q]);
-
-//   const renderTourCard = ({ item, index }: { item: ITour; index: number }) => (
-//     <TourCard
-//       key={index.toString()}
-//       _id={item._id}
-//       name={item.name}
-//       description={item.description}
-//       price={item.price}
-//       start_date={item.start_date}
-//       end_date={item.end_date}
-//       destination={item.destination}
-
-//       departure_location={item.departure_location}
-//       created_at={item.created_at}
-//     />
-//   );
-
-//   const handleSearch = (searchTerm: string) => {
-//     router.push({
-//       pathname: '/tours/search',
-//       params: { q: searchTerm }
-//     });
-//   };
-
-//   return (
-//     <View className="flex-1 bg-white">
-//       <View className="p-4">
-//         <SearchBar onSearch={handleSearch} />
-//       </View>
-//       {loading ? (
-//         <ActivityIndicator size="large" color="#24ABEC" style={{ position: 'absolute', top: '50%', left: '50%' }} />
-//       ) : (
-        
-//         <View >
-//           <Text className='mx-10 font-vollkorn-bold text-2xl'>Kết quả tìm kiếm</Text>
-//           <FlatList
-//         data={tours}
-//         renderItem={renderTourCard}
-//         keyExtractor={(item) => item._id.toString()}
-//         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
-//         showsVerticalScrollIndicator={false}
-//       />
-//       </View>
-//       )}
-//     </View>
-//   );
-// };
-
-// export default SearchPage;
+      {loading ? (
+        <ActivityIndicator size="large" color="#24ABEC" />
+      ) : error ? (
+        <View className="flex-1 justify-center items-center p-4">
+          <Text className="text-center text-gray-500 font-vollkorn">{error}</Text>
+        </View>
+      ) : tours.length > 0 ? (
+        <FlatList
+          data={tours}
+          renderItem={({ item }) => <TourCard {...item} />}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={{ padding: 16 }}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <View className="flex-1 justify-center items-center p-4">
+          <Text className="text-center text-gray-500 font-vollkorn">
+            Không tìm thấy tour phù hợp
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}

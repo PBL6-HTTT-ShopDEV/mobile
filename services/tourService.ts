@@ -130,5 +130,62 @@ export const tourService = {
         data: null
       };
     }
+  },
+
+  async searchTours(searchTerm: string, filters?: Record<string, string>): Promise<IApiResponse<ITour[]>> {
+    try {
+      const queryParams = new URLSearchParams({
+        q: searchTerm || '',
+        ...(filters || {})
+      });
+
+      const url = `${API_CONFIG.BASE_URL}/tour?${queryParams}`;
+      console.log('Search URL:', url);
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: API_CONFIG.HEADERS
+      });
+
+      const data = await response.json();
+      console.log('Search response:', data);
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Không thể tìm kiếm tour');
+      }
+
+      // Map và kiểm tra dữ liệu trước khi trả về
+      const tours = Array.isArray(data.metadata) ? data.metadata.map(tour => ({
+        _id: tour._id || '',
+        name: tour.name || '',
+        price: tour.price || 0,
+        destination: tour.destination || '',
+        departure_location: tour.departure_location || '',
+        start_date: tour.start_date || '',
+        end_date: tour.end_date || '',
+        description: tour.description || '',
+        thumbnail_url: tour.thumbnail || '', // Đảm bảo luôn có giá trị
+        images: Array.isArray(tour.images) ? tour.images : [],
+        status: tour.status || 'active',
+        max_group_size: tour.max_group_size || 0,
+        created_at: tour.created_at || '',
+        updated_at: tour.updated_at || '',
+        created_by: tour.created_by || '',
+        updated_by: tour.updated_by || ''
+      })) : [];
+
+      return {
+        status: 'success',
+        message: 'Tìm kiếm tour thành công',
+        data: tours
+      };
+    } catch (error) {
+      console.error("Error searching tours:", error);
+      return {
+        status: 'error',
+        message: error instanceof Error ? error.message : 'Đã có lỗi xảy ra',
+        data: []
+      };
+    }
   }
 }; 

@@ -26,7 +26,11 @@ const Schedule = () => {
       console.log('Bookings response:', response);
       
       if (response.status === 'success' && response.data) {
-        setBookings(response.data);
+        // Sắp xếp booking từ mới đến cũ
+        const sortedBookings = response.data.sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+        setBookings(sortedBookings);
       } else {
         console.log('Failed to fetch bookings:', response.message);
       }
@@ -58,6 +62,7 @@ const Schedule = () => {
 
       <ScrollView
         className="flex-1 px-4 pt-4"
+        contentContainerStyle={{ paddingBottom: 120 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
