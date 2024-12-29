@@ -79,6 +79,18 @@ const Booking: React.FC = () => {
     fetchTourData();
   }, [id]);
 
+  // Thêm các hàm validate
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    // Regex cho số điện thoại Việt Nam
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    return phoneRegex.test(phone);
+  };
+
   const handlePayment = async () => {
     console.log('handlePayment called');
     console.log('Current user state:', user);
@@ -124,11 +136,37 @@ const Booking: React.FC = () => {
       return;
     }
 
-    // Validate số lượng người
-    console.log('People count:', { adults: adultCount, children: childCount });
-    if (adultCount + childCount <= 0) {
-      console.log('No people selected');
+    // Validate email
+    if (!validateEmail(formData.email)) {
+      Alert.alert('Thông báo', 'Email không hợp lệ');
+      return;
+    }
+
+    // Validate phone
+    if (!validatePhone(formData.phone)) {
+      Alert.alert('Thông báo', 'Số điện thoại không hợp lệ');
+      return;
+    }
+
+    // Kiểm tra số lượng người
+    const totalPeople = adultCount + childCount;
+    
+    console.log('People check:', {
+      totalPeople,
+      maxSize: tourData?.max_group_size,
+      isValid: totalPeople > 0 && totalPeople <= (tourData?.max_group_size || 0)
+    });
+
+    if (totalPeople <= 0) {
       Alert.alert('Thông báo', 'Vui lòng chọn số lượng người tham gia');
+      return;
+    }
+
+    if (tourData && totalPeople > tourData.max_group_size) {
+      Alert.alert(
+        'Thông báo', 
+        `Số lượng người vượt quá giới hạn cho phép (tối đa ${tourData.max_group_size} người)`
+      );
       return;
     }
 
@@ -243,12 +281,15 @@ const Booking: React.FC = () => {
   }, []);
 
   return (
-    <View className='bg-white'>
+    <View className='flex-1 bg-white'>
       <TouchableOpacity className='absolute top-8 left-2 z-10 pr-10' onPress={() => router.back()}>
         <Ionicons name="chevron-back-outline" size={30} color="black" /> 
       </TouchableOpacity>
+
+      {/* Header */}
       <View className='mt-9'>
         <Text className='text-3xl text-center font-vollkorn-bold text-blue'>Đặt tour</Text>
+        {/* Progress steps */}
         <View className='flex justify-center flex-nowrap items-center flex-row gap-1 mt-2'>
           <View className='justify-center items-center'>
             <FontAwesome5 name="user-edit" size={24} color="#24ABEC" />
@@ -269,7 +310,10 @@ const Booking: React.FC = () => {
             <Text className='text-lg font-vollkorn-bold text-black-60'>Hoàn tất</Text>
           </View>
         </View>
-        <ScrollView contentContainerStyle={{ paddingBottom: 180 }}>
+      </View>
+
+      {/* Main content */}
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
         <Text className='text-2xl text-center font-vollkorn-bold text-black mt-5'>Thông tin liên lạc</Text>
         <View className="h-1.5 w-56 bg-blue rounded-full mx-auto" />
         <View className='ml-6'>
@@ -356,17 +400,18 @@ const Booking: React.FC = () => {
       {/* Hiển thị thông tin cho trẻ em */}
       {renderChildren()}
     </View>
-    <View className="px-6 mt-4">
-          <TouchableOpacity 
-            onPress={handlePayment}
-            className="bg-blue py-4 rounded-lg"
-          >
-            <Text className="text-white text-center text-lg font-vollkorn-bold">
-              Thanh toán qua VNPay
-            </Text>
-          </TouchableOpacity>
-        </View>
-        </ScrollView>
+      </ScrollView>
+
+      {/* Fixed bottom button */}
+      <View className="absolute bottom-0 left-0 right-0 bg-white px-6 py-4 shadow-lg">
+        <TouchableOpacity 
+          onPress={handlePayment}
+          className="bg-blue py-4 rounded-lg"
+        >
+          <Text className="text-white text-center text-lg font-vollkorn-bold">
+            Thanh toán qua VNPay
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   )

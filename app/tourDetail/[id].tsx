@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Text, ImageBackground, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, ImageBackground, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { tourService } from '../../services/tourService';
 import { ITour } from '../../types/Tour.types';
@@ -18,6 +18,25 @@ const TourDetail: React.FC = () => {
 
   const handleBooking = () => {
     if (!tour?._id) return;
+
+    // Kiểm tra ngày tour
+    const startDate = new Date(tour.start_date || '');
+    const today = new Date();
+    
+    console.log('Date check:', {
+      startDate,
+      today,
+      isValid: startDate > today
+    });
+
+    if (startDate <= today) {
+      Alert.alert(
+        'Không thể đặt tour',
+        'Tour này đã quá hạn đặt. Vui lòng chọn tour khác.'
+      );
+      return;
+    }
+
     router.push({
       pathname: `/tourDetail/[id]/booking`,
       params: { id: tour._id.toString() }
